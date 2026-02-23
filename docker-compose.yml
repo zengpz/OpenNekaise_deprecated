@@ -11,18 +11,7 @@ services:
     stdin_open: true
     tty: true
     init: true
-    environment:
-      # Model selection
-      - OPENCLAW_MODEL=${OPENCLAW_MODEL:-openai-codex/gpt-5.3-codex}
-      # Channel secrets — set these in .env
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
-      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
-      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN:-}
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
-      # Gateway
-      - GATEWAY_TOKEN=${GATEWAY_TOKEN:-}
     volumes:
-      # All user-writable state: config, workspace, memory, logs
       - ./data:/data
     ports:
       - "${GATEWAY_PORT:-18789}:18789"

@@ -16,15 +16,23 @@ LABEL org.opencontainers.image.based-on="openclaw@${OPENCLAW_VERSION}"
 
 # ── Runtime dependencies ─────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    jq \
+    jq git ca-certificates \
+    python3 make g++ libopus-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Rewrite SSH git URLs to HTTPS (no SSH keys inside container)
+RUN printf '[url "https://github.com/"]\n\tinsteadOf = ssh://git@github.com/\n\tinsteadOf = git@github.com:\n' > /root/.gitconfig
+
 # ── Install OpenClaw at pinned version ───────────────────────────────────────
+ENV GIT_TERMINAL_PROMPT=0
 RUN npm install -g openclaw@${OPENCLAW_VERSION}
 
 # ── Apply OpenNekaise branding patches to the installed package ──────────────
 COPY patches/apply-branding.sh /tmp/apply-branding.sh
 RUN bash /tmp/apply-branding.sh && rm /tmp/apply-branding.sh
+
+# ── Create `opennekaise` CLI alias ──────────────────────────────────────────
+RUN ln -s "$(which openclaw)" /usr/local/bin/opennekaise
 
 # ── Copy OpenNekaise base workspace (read-only reference inside image) ────────
 COPY workspace/ /nekaise/workspace/
@@ -42,5 +50,5 @@ VOLUME ["/data"]
 ENV OPENCLAW_HOME=/data/.openclaw
 
 ENTRYPOINT ["/entrypoint.sh"]
-# Default: run the gateway, bound to all LAN interfaces
-CMD ["gateway", "--bind", "lan"]
+# Default: interactive shell so users can run `opennekaise onboard`
+CMD ["bash"]

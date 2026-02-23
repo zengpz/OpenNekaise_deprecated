@@ -15,6 +15,7 @@ fi
 
 echo "[opennekaise] Patching openclaw @ $PKG"
 
+# Helper: safe sed replacement in a file (no error if pattern not found)
 patch_file() {
     local f="$1"
     local before="$2"
@@ -25,20 +26,33 @@ patch_file() {
     fi
 }
 
-# ── Brand name in onboard terminal banner ─────────────────────────────────────
-# "🦞 OpenClaw" appears in the onboard wizard header
+# ── Patch all .js files in dist/ ─────────────────────────────────────────────
 for f in "$PKG"/dist/*.js; do
-    patch_file "$f" "🦞 OpenClaw" "🏔️  OpenNekaise"
-done
+    [ -f "$f" ] || continue
 
-# ── Standalone lobster emoji used as section markers ─────────────────────────
-for f in "$PKG"/dist/*.js; do
-    # Only replace when the emoji is the full value of a string literal
+    # Brand name in banner / headers
+    patch_file "$f" "🦞 OpenClaw" "🏔️  OpenNekaise"
+    patch_file "$f" "🦞 OPENCLAW 🦞" "🏔️  OPENNEKAISE 🏔️"
+
+    # Onboarding wizard title
+    patch_file "$f" "OpenClaw onboarding" "OpenNekaise onboarding"
+
+    # Security notice — rebrand OpenClaw references
+    patch_file "$f" "OpenClaw is a hobby project and still in beta. Expect sharp edges." \
+        "OpenNekaise is a building energy AI assistant built on OpenClaw. It helps with HVAC, district heating, PV, indoor climate, and building physics."
+
+    patch_file "$f" "don't run OpenClaw" "don't run OpenNekaise"
+
+    patch_file "$f" "openclaw security audit" "opennekaise security audit"
+
+    # Standalone lobster emoji used as section markers → mountain
     sed -i 's/"🦞"/"🏔️"/g' "$f" 2>/dev/null || true
+
+    # Remove the ASCII block-letter "OPENCLAW" banner
+    sed -i '/▄▄▄▄/d; /██░/d; /▀▀▀▀/d' "$f" 2>/dev/null || true
 done
 
 # ── Skills: patch SKILL.md files that show the brand name to users ────────────
-# (upstream skill descriptions sometimes reference "OpenClaw" by name)
 for f in "$PKG"/skills/*/SKILL.md; do
     [ -f "$f" ] || continue
     if grep -qiF "openclaw" "$f" 2>/dev/null; then

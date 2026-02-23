@@ -2,82 +2,51 @@
 
 Building energy AI assistant — a distribution of [OpenClaw](https://github.com/openclaw/openclaw).
 
-**Agent:** OpenNekaise Agent — HVAC, district heating, PV, indoor climate, building physics.
-**Deployment:** Docker image. Users run `docker compose up -d` and get the full stack.
-
----
-
-## Architecture — three layers
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                     User layer (volume)                   │
-│  ./data/.openclaw/openclaw.json  ← generated from .env   │
-│  ./data/.openclaw/workspace/     ← user edits go here    │
-│  ./data/.openclaw/memory/        ← agent memory          │
-│  ./data/.openclaw/logs/          ← runtime logs          │
-│  Persisted on host, never overwritten by image updates   │
-├──────────────────────────────────────────────────────────┤
-│              OpenNekaise layer (this repo)                │
-│  workspace/   ← OpenNekaise base workspace (baked in image)  │
-│  config/      ← Config template (secrets from env vars)  │
-│  patches/     ← Brand string patches to openclaw dist    │
-│  scripts/     ← entrypoint.sh, sync-workspace.sh         │
-│  Dockerfile, docker-compose.yml, .env.example            │
-├──────────────────────────────────────────────────────────┤
-│              OpenClaw (npm package, pinned version)       │
-│  Installed inside Docker image via npm install -g        │
-│  Version pinned in .env (OPENCLAW_VERSION)               │
-│  Update: change version → docker compose build           │
-└──────────────────────────────────────────────────────────┘
-```
-
-**Key property:** the user-writable volume (`./data/`) survives image rebuilds and upstream updates. The entrypoint only writes files that don't exist yet — it never overwrites user edits.
+OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV systems, indoor climate, and building physics. It ships as a Docker image — users pull it, run the interactive onboarding wizard, and configure their own LLM backend and chat channels.
 
 ---
 
 ## Quick start
 
 ```bash
-# 1. Clone
-git clone <this-repo> opennekaise && cd opennekaise
+# 1. Clone and build
+git clone https://github.com/zengpz/OpenNekaise.git opennekaise && cd opennekaise
+docker compose build
 
-# 2. Configure secrets
-cp .env.example .env
-$EDITOR .env          # fill in TELEGRAM_BOT_TOKEN, SLACK_BOT_TOKEN, etc.
-
-# 3. Build and run
+# 2. Start the container
 docker compose up -d
 
-# 4. Follow logs
-docker compose logs -f
+# 3. Attach and run the onboarding wizard
+docker exec -it nekaise bash
+opennekaise onboard
 ```
 
-On first run, `./data/.openclaw/` is created with:
-- `openclaw.json` — generated from `.env` values
-- `workspace/` — OpenNekaise base files (AGENTS.md, SOUL.md, skills, …)
+The onboarding wizard walks you through:
+- Choosing your LLM backend (OpenAI, Anthropic, local models, etc.)
+- Setting up chat channels (Telegram, Slack, Discord)
+- Configuring the gateway
+
+After onboarding, start the gateway:
+```bash
+opennekaise gateway --bind lan
+```
+
+All user data is persisted in `./data/` on the host and survives container rebuilds.
 
 ---
 
-## Tracking upstream OpenClaw updates
+## Other useful commands
 
 ```bash
-# 1. Find the new version
-npm view openclaw version
+# Inside the container:
+opennekaise configure       # Re-run the configuration wizard
+opennekaise gateway --bind lan  # Start the gateway
 
-# 2. Update OPENCLAW_VERSION in .env
-OPENCLAW_VERSION=2026.x.x
-
-# 3. Rebuild the image
-docker compose build
-
-# 4. Restart
-docker compose up -d
+# On the host:
+docker compose logs -f      # Follow logs
+docker compose down         # Stop
+docker compose build        # Rebuild after changes
 ```
-
-The upstream changelog is at https://github.com/openclaw/openclaw/blob/main/CHANGELOG.md.
-Brand patches (`patches/apply-branding.sh`) use string-literal matching, so they're
-resilient to upstream changes unless the brand strings themselves move.
 
 ---
 
@@ -103,58 +72,38 @@ Edit them here, commit, and rebuild the image.
 Users can freely edit files in `./data/.openclaw/workspace/`. These are never
 overwritten by image updates. Add new skills, modify AGENTS.md, etc.
 
-### Syncing between repo and live workspace
+---
+
+## Tracking upstream OpenClaw updates
 
 ```bash
-# Check what differs between repo and running volume
-bash scripts/sync-workspace.sh
+# 1. Update OPENCLAW_VERSION in .env
+OPENCLAW_VERSION=2026.x.x
 
-# Save live edits back to the repo
-bash scripts/sync-workspace.sh --push
+# 2. Rebuild
+docker compose build
 
-# Apply repo changes to live workspace
-bash scripts/sync-workspace.sh --pull
+# 3. Restart
+docker compose up -d
 ```
 
 ---
 
-## Workspace / skills structure
+## Architecture
 
 ```
-./data/.openclaw/workspace/       ← user-writable (Docker volume)
-├── AGENTS.md                     ← installed from image on first run
-├── SOUL.md
-├── IDENTITY.md
-├── USER.md
-├── TOOLS.md
-├── HEARTBEAT.md
-├── memory/                       ← agent daily memory logs
-└── skills/
-    ├── kebnekaise-buildings/     ← installed from image on first run
-    │   └── SKILL.md
-    └── (your own skills)         ← add freely, never overwritten
+┌──────────────────────────────────────────────────────────┐
+│                     User layer (volume)                   │
+│  ./data/.openclaw/           ← config, workspace, memory │
+│  Persisted on host, never overwritten by image updates   │
+├──────────────────────────────────────────────────────────┤
+│              OpenNekaise layer (this repo)                │
+│  workspace/   ← base workspace (baked in image)          │
+│  patches/     ← branding patches                         │
+│  scripts/     ← entrypoint.sh                            │
+├──────────────────────────────────────────────────────────┤
+│              OpenClaw (npm package, pinned version)       │
+│  Installed inside Docker image via npm install -g        │
+│  Version pinned in .env (OPENCLAW_VERSION)               │
+└──────────────────────────────────────────────────────────┘
 ```
-
----
-
-## Branding patches
-
-`patches/apply-branding.sh` runs during `docker build` and patches the installed
-openclaw npm package with OpenNekaise brand strings.
-
-What gets patched:
-- Terminal onboard banner: `🦞 OpenClaw` → `🏔️  Nekaise`
-- Bundled skill SKILL.md files: `OpenClaw` → `OpenNekaise`
-
-What is NOT patched (intentional):
-- `docs.openclaw.ai` URLs — they point to real upstream documentation
-- Internal variable names and logic — never touched
-- The `openclaw` CLI command name — internal only, users never type it
-
----
-
-## Building data
-
-Building files live at `/home/nano2/KebnekaiseBuildings/` on the host.
-The building domain skill (`kebnekaise-buildings`) documents how the agent uses them.
-See [`workspace/skills/kebnekaise-buildings/SKILL.md`](workspace/skills/kebnekaise-buildings/SKILL.md).
