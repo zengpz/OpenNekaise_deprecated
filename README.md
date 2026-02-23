@@ -1,4 +1,4 @@
-# OpenNekaise
+# 🏔️ OpenNekaise
 
 Building energy AI assistant — a distribution of [OpenClaw](https://github.com/openclaw/openclaw).
 
