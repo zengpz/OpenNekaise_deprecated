@@ -10,6 +10,7 @@ set -euo pipefail
 OPENCLAW_HOME_DEFAULT="/.opennekaise"
 OPENCLAW_HOME_LEGACY="/.openclaw"
 OPENCLAW_HOME="${OPENCLAW_HOME:-$OPENCLAW_HOME_DEFAULT}"
+BUILDINGS_DIR="${NEKAISE_BUILDINGS_DIR:-/buildings}"
 NEKAISE_BASE="/nekaise"
 
 # ── 1. Runtime home migration/compatibility ───────────────────────────────────
@@ -31,7 +32,7 @@ fi
 mkdir -p \
     "$OPENCLAW_HOME/logs" \
     "$OPENCLAW_HOME/memory" \
-    "$OPENCLAW_HOME/buildings"
+    "$BUILDINGS_DIR"
 
 # ── 3. Workspace lives read-only inside the image ────────────────────────────
 # OpenClaw reads workspace from $OPENCLAW_HOME/workspace — symlink to the
@@ -57,7 +58,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "bash" ]; then
     echo "  Configure:     opennekaise configure"
     echo "  Start gateway: opennekaise gateway --bind lan"
     echo ""
-    echo "  Building data: $OPENCLAW_HOME/buildings/"
+    echo "  Building data: $BUILDINGS_DIR/"
     echo ""
     exec bash
 else

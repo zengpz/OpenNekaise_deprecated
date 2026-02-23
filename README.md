@@ -38,16 +38,20 @@ Agent pack source files live in `./.opennekaise/` and are baked into the image.
 
 ## Adding your buildings
 
-Place building data folders in `./.opennekaise/runtime/buildings/` on the host:
+Place building data folders in your home folder on the host:
 
 ```
-./.opennekaise/runtime/buildings/
+~/opennekaise-buildings/
 ├── my-building-1/     ← your data (CSV, PDF, logs, etc.)
 ├── my-building-2/
 └── ...
 ```
 
-Each subfolder represents one building. The agent automatically looks in `/.opennekaise/buildings/` when answering questions about your buildings.
+Each subfolder represents one building. The folder is mounted into the container as `/buildings/`, and the agent uses `/buildings/` by default.
+If the host folder does not exist, create it with:
+```bash
+mkdir -p ~/opennekaise-buildings
+```
 
 ---
 
@@ -106,7 +110,7 @@ docker compose up -d
 ```
 ┌──────────────────────────────────────────────────────────┐
 │                     User data (volume)                    │
-│  ./.opennekaise/runtime/buildings/ ← building data (CSV…)│
+│  ~/opennekaise-buildings/        ← building data (CSV…)   │
 │  ./.opennekaise/runtime/           ← config, memory, logs│
 │  Persisted on host, survives container rebuilds           │
 ├──────────────────────────────────────────────────────────┤

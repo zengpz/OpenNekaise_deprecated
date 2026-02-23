@@ -13,5 +13,6 @@ services:
     init: true
     volumes:
       - ./.opennekaise/runtime:/.opennekaise
+      - ${HOME}/opennekaise-buildings:/buildings
     ports:
       - "${GATEWAY_PORT:-18789}:18789"
