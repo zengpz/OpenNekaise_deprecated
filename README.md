@@ -31,22 +31,23 @@ After onboarding, start the gateway:
 opennekaise gateway --bind lan
 ```
 
-All user data is persisted in `./data/` on the host and survives container rebuilds.
+All user runtime data is persisted in `./.opennekaise/runtime/` on the host and survives container rebuilds.
+Agent pack source files live in `./.opennekaise/` and are baked into the image.
 
 ---
 
 ## Adding your buildings
 
-Place building data folders in `./data/buildings/` on the host:
+Place building data folders in `./.opennekaise/runtime/buildings/` on the host:
 
 ```
-./data/buildings/
+./.opennekaise/runtime/buildings/
 ├── my-building-1/     ← your data (CSV, PDF, logs, etc.)
 ├── my-building-2/
 └── ...
 ```
 
-Each subfolder represents one building. The agent automatically looks in `/data/buildings/` when answering questions about your buildings.
+Each subfolder represents one building. The agent automatically looks in `/.opennekaise/buildings/` when answering questions about your buildings.
 
 ---
 
@@ -67,18 +68,21 @@ docker compose build        # Rebuild after changes
 
 ## Customizing the agent
 
-### Workspace files (baked into the image)
+### Agent pack files (baked into the image)
 
-The agent's core design files live in `workspace/` and are baked read-only into the Docker image. Edit them here, commit, and rebuild.
+The agent's core design files live in `./.opennekaise/` and are baked read-only into the Docker image. Edit them here, commit, and rebuild.
 
 | File | Purpose |
 |---|---|
-| `workspace/AGENTS.md` | Operating rules — how the agent behaves |
-| `workspace/SOUL.md` | Identity — who the agent is |
-| `workspace/IDENTITY.md` | Domain expertise definition |
-| `workspace/USER.md` | Stakeholder profiles + audience adaptation |
-| `workspace/TOOLS.md` | Tool notes and environment config |
-| `workspace/HEARTBEAT.md` | Periodic task checklist |
+| `.opennekaise/AGENTS.md` | Operating rules — how the agent behaves |
+| `.opennekaise/SOUL.md` | Identity — who the agent is |
+| `.opennekaise/IDENTITY.md` | Domain expertise definition |
+| `.opennekaise/USER.md` | Stakeholder profiles + audience adaptation |
+| `.opennekaise/TOOLS.md` | Tool notes and environment config |
+| `.opennekaise/HEARTBEAT.md` | Periodic task checklist |
+| `.opennekaise/internal-docs/` | Versioned internal references (ontology + operating doctrine) |
+
+Runtime state is separate and not versioned: `./.opennekaise/runtime/` (mounted into the container).
 
 ---
 
@@ -102,12 +106,12 @@ docker compose up -d
 ```
 ┌──────────────────────────────────────────────────────────┐
 │                     User data (volume)                    │
-│  ./data/buildings/         ← building data (CSV, PDF…)   │
-│  ./data/.openclaw/         ← config, memory, logs        │
+│  ./.opennekaise/runtime/buildings/ ← building data (CSV…)│
+│  ./.opennekaise/runtime/           ← config, memory, logs│
 │  Persisted on host, survives container rebuilds           │
 ├──────────────────────────────────────────────────────────┤
 │              OpenNekaise layer (this repo)                │
-│  workspace/   ← agent design (read-only in image)        │
+│  .opennekaise/ ← agent pack source (baked read-only)     │
 │  patches/     ← branding patches                         │
 │  scripts/     ← entrypoint.sh                            │
 ├──────────────────────────────────────────────────────────┤

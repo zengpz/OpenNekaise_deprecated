@@ -4,16 +4,16 @@ This file describes environment-specific details the agent needs to know.
 
 ## Building Data
 
-Building data is stored at `/data/buildings/`. Each subfolder represents one building:
+Building data is stored at `/.opennekaise/buildings/`. Each subfolder represents one building:
 
 ```
-/data/buildings/
+/.opennekaise/buildings/
 ├── building-a/     ← CSV, PDF, logs, etc.
 ├── building-b/
 └── ...
 ```
 
-Use `/data/buildings/` as the default working location for all building-related tasks unless told otherwise.
+Use `/.opennekaise/buildings/` as the default working location for all building-related tasks unless told otherwise.
 
 When a user asks about "their buildings" or "building data", look in this directory first.
 

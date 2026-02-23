@@ -34,17 +34,17 @@ RUN bash /tmp/apply-branding.sh && rm /tmp/apply-branding.sh
 # ── Create `opennekaise` CLI alias ──────────────────────────────────────────
 RUN ln -s "$(which openclaw)" /usr/local/bin/opennekaise
 
-# ── Copy OpenNekaise base workspace (read-only reference inside image) ────────
-COPY workspace/ /nekaise/workspace/
+# ── Copy OpenNekaise agent pack (read-only reference inside image) ───────────
+COPY .opennekaise/ /nekaise/workspace/
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# User-writable data volume (config, workspace, memory, logs)
-VOLUME ["/data"]
+# User-writable runtime volume (config, workspace link, memory, logs, buildings)
+VOLUME ["/.opennekaise"]
 
-ENV OPENCLAW_HOME=/data/.openclaw
+ENV OPENCLAW_HOME=/.opennekaise
 
 ENTRYPOINT ["/entrypoint.sh"]
 # Default: interactive shell so users can run `opennekaise onboard`

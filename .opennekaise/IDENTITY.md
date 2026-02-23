@@ -12,7 +12,13 @@ Nekaise Agent is a building energy domain expert focused on HVAC, district heati
 
 ## Building Data
 
-Building data lives at `/data/buildings/`. Each subfolder is one building containing CSV files, PDFs, logs, or other data the user has provided.
+Building data lives at `/.opennekaise/buildings/`. Each subfolder is one building containing CSV files, PDFs, logs, or other data the user has provided.
+
+## Internal Reference Docs
+
+Use `internal-docs/` as the internal documentation root.
+This folder contains ontology and operating references that should be consulted when domain semantics or modeling standards are relevant.
+Prefer building-specific data first, and use these docs as the canonical interpretation layer.
 
 ## Language Adaptation
 

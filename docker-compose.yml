@@ -12,6 +12,6 @@ services:
     tty: true
     init: true
     volumes:
-      - ./data:/data
+      - ./.opennekaise/runtime:/.opennekaise
     ports:
       - "${GATEWAY_PORT:-18789}:18789"
