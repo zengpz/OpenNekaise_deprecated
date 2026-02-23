@@ -1,4 +1,4 @@
-# 🏔️ OpenNekaise
+# OpenNekaise
 
 Building energy AI assistant — a distribution of [OpenClaw](https://github.com/openclaw/openclaw).
 
@@ -35,6 +35,21 @@ All user data is persisted in `./data/` on the host and survives container rebui
 
 ---
 
+## Adding your buildings
+
+Place building data folders in `./data/buildings/` on the host:
+
+```
+./data/buildings/
+├── my-building-1/     ← your data (CSV, PDF, logs, etc.)
+├── my-building-2/
+└── ...
+```
+
+Each subfolder represents one building. The agent automatically looks in `/data/buildings/` when answering questions about your buildings.
+
+---
+
 ## Other useful commands
 
 ```bash
@@ -52,10 +67,9 @@ docker compose build        # Rebuild after changes
 
 ## Customizing the agent
 
-### Base workspace (tracked in this repo)
+### Workspace files (baked into the image)
 
-Files in `workspace/` are the OpenNekaise defaults baked into the Docker image.
-Edit them here, commit, and rebuild the image.
+The agent's core design files live in `workspace/` and are baked read-only into the Docker image. Edit them here, commit, and rebuild.
 
 | File | Purpose |
 |---|---|
@@ -63,14 +77,8 @@ Edit them here, commit, and rebuild the image.
 | `workspace/SOUL.md` | Identity — who the agent is |
 | `workspace/IDENTITY.md` | Domain expertise definition |
 | `workspace/USER.md` | Stakeholder profiles + audience adaptation |
-| `workspace/TOOLS.md` | Tool notes and local config |
+| `workspace/TOOLS.md` | Tool notes and environment config |
 | `workspace/HEARTBEAT.md` | Periodic task checklist |
-| `workspace/skills/kebnekaise-buildings/` | Building domain skill |
-
-### User workspace (persisted in `./data/`, not in repo)
-
-Users can freely edit files in `./data/.openclaw/workspace/`. These are never
-overwritten by image updates. Add new skills, modify AGENTS.md, etc.
 
 ---
 
@@ -93,12 +101,13 @@ docker compose up -d
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                     User layer (volume)                   │
-│  ./data/.openclaw/           ← config, workspace, memory │
-│  Persisted on host, never overwritten by image updates   │
+│                     User data (volume)                    │
+│  ./data/buildings/         ← building data (CSV, PDF…)   │
+│  ./data/.openclaw/         ← config, memory, logs        │
+│  Persisted on host, survives container rebuilds           │
 ├──────────────────────────────────────────────────────────┤
 │              OpenNekaise layer (this repo)                │
-│  workspace/   ← base workspace (baked in image)          │
+│  workspace/   ← agent design (read-only in image)        │
 │  patches/     ← branding patches                         │
 │  scripts/     ← entrypoint.sh                            │
 ├──────────────────────────────────────────────────────────┤

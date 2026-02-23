@@ -37,9 +37,6 @@ RUN ln -s "$(which openclaw)" /usr/local/bin/opennekaise
 # ── Copy OpenNekaise base workspace (read-only reference inside image) ────────
 COPY workspace/ /nekaise/workspace/
 
-# ── Copy default config template ─────────────────────────────────────────────
-COPY config/openclaw.defaults.json /nekaise/config/openclaw.defaults.json
-
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

@@ -1,44 +1,21 @@
 # TOOLS.md - Local Notes
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
+This file describes environment-specific details the agent needs to know.
 
-## What Goes Here
+## Building Data
 
-Things like:
+Building data is stored at `/data/buildings/`. Each subfolder represents one building:
 
-- Camera names and locations
-- SSH hosts and aliases
-- Preferred voices for TTS
-- Speaker/room names
-- Device nicknames
-- Anything environment-specific
-
-## Examples
-
-```markdown
-### Cameras
-
-- living-room → Main area, 180° wide angle
-- front-door → Entrance, motion-triggered
-
-### SSH
-
-- home-server → 192.168.1.100, user: admin
-
-### TTS
-
-- Preferred voice: "Nova" (warm, slightly British)
-- Default speaker: Kitchen HomePod
+```
+/data/buildings/
+├── building-a/     ← CSV, PDF, logs, etc.
+├── building-b/
+└── ...
 ```
 
-## Why Separate?
+Use `/data/buildings/` as the default working location for all building-related tasks unless told otherwise.
 
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
-
-## Local Defaults
-
-- Preferred project/data directory: `/home/nano2/KebnekaiseBuildings/`
-- Use this path as the default working location for building-related tasks unless told otherwise.
+When a user asks about "their buildings" or "building data", look in this directory first.
 
 ---
 

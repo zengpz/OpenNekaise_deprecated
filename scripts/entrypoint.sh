@@ -2,42 +2,30 @@
 # entrypoint.sh — OpenNekaise Docker container entrypoint
 #
 # Responsibilities:
-#   1. Create directory structure
-#   2. Install base workspace files (first run only, never overwrite user edits)
+#   1. Create user-writable directory structure
+#   2. Point openclaw workspace to the read-only image copy
 #   3. Run whatever the user passes (default: bash for interactive use)
 set -euo pipefail
 
 OPENCLAW_HOME="${OPENCLAW_HOME:-/data/.openclaw}"
-WORKSPACE="$OPENCLAW_HOME/workspace"
 NEKAISE_BASE="/nekaise"
 
 # ── 1. Directory setup ────────────────────────────────────────────────────────
 mkdir -p \
-    "$OPENCLAW_HOME" \
-    "$WORKSPACE/skills" \
     "$OPENCLAW_HOME/logs" \
-    "$OPENCLAW_HOME/memory"
+    "$OPENCLAW_HOME/memory" \
+    /data/buildings
 
-# ── 2. Install base workspace (first-run only, never overwrite) ───────────────
-for f in AGENTS.md SOUL.md TOOLS.md IDENTITY.md USER.md HEARTBEAT.md MEMORY.md; do
-    src="$NEKAISE_BASE/workspace/$f"
-    dst="$WORKSPACE/$f"
-    if [ -f "$src" ] && [ ! -f "$dst" ]; then
-        cp "$src" "$dst"
-        echo "[opennekaise] Installed: $f"
-    fi
-done
-
-# Base skills: only copy skills that don't already exist in the user's workspace
-for skill_dir in "$NEKAISE_BASE/workspace/skills"/*/; do
-    [ -d "$skill_dir" ] || continue
-    skill_name="$(basename "$skill_dir")"
-    dst_skill="$WORKSPACE/skills/$skill_name"
-    if [ ! -d "$dst_skill" ]; then
-        cp -r "$skill_dir" "$dst_skill"
-        echo "[opennekaise] Installed skill: $skill_name"
-    fi
-done
+# ── 2. Workspace lives read-only inside the image ────────────────────────────
+# OpenClaw reads workspace from $OPENCLAW_HOME/workspace — symlink to the
+# baked-in copy so the agent files are not user-editable.
+if [ ! -L "$OPENCLAW_HOME/workspace" ] && [ ! -d "$OPENCLAW_HOME/workspace" ]; then
+    ln -s "$NEKAISE_BASE/workspace" "$OPENCLAW_HOME/workspace"
+    echo "[opennekaise] Workspace linked to $NEKAISE_BASE/workspace (read-only)"
+elif [ -d "$OPENCLAW_HOME/workspace" ] && [ ! -L "$OPENCLAW_HOME/workspace" ]; then
+    echo "[opennekaise] Note: user workspace directory exists at $OPENCLAW_HOME/workspace"
+    echo "[opennekaise] Remove it to use the default read-only workspace."
+fi
 
 # ── 3. Run user command ──────────────────────────────────────────────────────
 # If no args or just "bash", drop into interactive shell
@@ -46,11 +34,13 @@ export OPENCLAW_HOME
 
 if [ "$#" -eq 0 ] || [ "$1" = "bash" ]; then
     echo ""
-    echo "🏔️  OpenNekaise — building energy AI assistant"
+    echo "  OpenNekaise — building energy AI assistant"
     echo ""
     echo "  Get started:   opennekaise onboard"
     echo "  Configure:     opennekaise configure"
     echo "  Start gateway: opennekaise gateway --bind lan"
+    echo ""
+    echo "  Building data: /data/buildings/"
     echo ""
     exec bash
 else
