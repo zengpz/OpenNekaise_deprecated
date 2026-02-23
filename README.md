@@ -6,6 +6,13 @@ OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV sy
 
 ---
 
+## Prerequisites
+
+- Docker Engine + Docker Compose plugin
+- Run commands as your regular user (avoid `sudo` so `${HOME}` resolves correctly)
+
+---
+
 ## Quick start
 
 ```bash
@@ -13,10 +20,13 @@ OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV sy
 git clone https://github.com/zengpz/OpenNekaise.git opennekaise && cd opennekaise
 docker compose build
 
-# 2. Start the container
+# 2. Prepare a host folder for building data
+mkdir -p ~/opennekaise-buildings
+
+# 3. Start the container
 docker compose up -d
 
-# 3. Attach and run the onboarding wizard
+# 4. Attach and run the onboarding wizard
 docker exec -it nekaise bash
 opennekaise onboard
 ```
@@ -33,6 +43,7 @@ opennekaise gateway --bind lan
 
 All user runtime data is persisted in `./.opennekaise/runtime/` on the host and survives container rebuilds.
 Agent pack source files live in `./.opennekaise/` and are baked into the image.
+Onboarding-generated config is stored in `./.opennekaise/runtime/`.
 
 ---
 
@@ -93,13 +104,16 @@ Runtime state is separate and not versioned: `./.opennekaise/runtime/` (mounted 
 ## Tracking upstream OpenClaw updates
 
 ```bash
-# 1. Update OPENCLAW_VERSION in .env
+# 1. (Optional) create .env if you want overrides
+cp .env.example .env
+
+# 2. Update OPENCLAW_VERSION in .env
 OPENCLAW_VERSION=2026.x.x
 
-# 2. Rebuild
+# 3. Rebuild
 docker compose build
 
-# 3. Restart
+# 4. Restart
 docker compose up -d
 ```
 
