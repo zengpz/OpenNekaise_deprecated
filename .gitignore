@@ -1,0 +1,12 @@
+# Secrets — never commit
+.env
+
+# User data volume — this is runtime state, not source
+data/
+
+# Runtime memory logs (daily files in workspace)
+workspace/memory/
+
+# OS / editor
+.DS_Store
+*.swp
