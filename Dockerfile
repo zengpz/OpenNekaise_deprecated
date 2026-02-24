@@ -6,7 +6,7 @@
 FROM node:22-bookworm-slim
 
 # Pin openclaw version here. Update this line to track upstream.
-ARG OPENCLAW_VERSION=2026.2.21-2
+ARG OPENCLAW_VERSION=latest
 ARG NEKAISE_VERSION=1.0.0
 
 LABEL org.opencontainers.image.title="OpenNekaise"

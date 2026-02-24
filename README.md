@@ -121,17 +121,18 @@ OpenNekaise/
 
 ---
 
-## Tracking upstream OpenClaw updates
+## Updating OpenClaw
+
+By default, every `docker compose build` pulls the latest OpenClaw version. Just rebuild to update:
 
 ```bash
-# 1. Create .env from the example (if you haven't already)
-cp .env.example .env
-
-# 2. Update OPENCLAW_VERSION in .env
-OPENCLAW_VERSION=2026.x.x
-
-# 3. Rebuild and restart
 docker compose build && docker compose up -d
+```
+
+To pin a specific version, set `OPENCLAW_VERSION` in your `.env`:
+
+```bash
+OPENCLAW_VERSION=2026.2.21-2
 ```
 
 ---
@@ -150,9 +151,9 @@ docker compose build && docker compose up -d
 │   .nekaiseagent/   agent pack — baked read-only into image  │
 │   .opennekaise/    project infra — patches, entrypoint      │
 ├─────────────────────────────────────────────────────────────┤
-│  OpenClaw (npm package, pinned version)                     │
+│  OpenClaw (npm package, latest by default)                  │
 │                                                             │
 │   Installed via npm install -g inside Docker image          │
-│   Version pinned in .env (OPENCLAW_VERSION)                 │
+│   Override with OPENCLAW_VERSION in .env to pin             │
 └─────────────────────────────────────────────────────────────┘
 ```
