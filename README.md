@@ -17,7 +17,7 @@ OpenNekaise packages everything you need to run Nekaise Agent, an AI-powered bui
 
 ```bash
 # 1. Clone and build
-git clone https://github.com/zengpz/OpenNekaise.git opennekaise && cd opennekaise
+git clone https://github.com/OpenNekaise/OpenNekaise.git opennekaise && cd opennekaise
 docker compose build
 
 # 2. Start the container
