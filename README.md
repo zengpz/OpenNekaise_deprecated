@@ -1,8 +1,8 @@
 # 🏔️ OpenNekaise
 
-Building energy AI assistant — a distribution of [OpenClaw](https://github.com/openclaw/openclaw).
+A distribution of [OpenClaw](https://github.com/openclaw/openclaw) that ships **Nekaise Agent** — your virtual building manager.
 
-OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV systems, indoor climate, and building physics. It ships as a Docker image — run the interactive onboarding wizard and configure your own LLM backend and chat channels.
+OpenNekaise packages everything you need to run Nekaise Agent, an AI-powered building manager that understands HVAC, district heating, PV systems, indoor climate, and building physics. It monitors your buildings, answers questions about energy use and comfort, and helps you act on what matters. Ships as a Docker image with interactive onboarding — bring your own LLM backend and connect your chat channels.
 
 ---
 
