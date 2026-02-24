@@ -9,7 +9,7 @@ OpenNekaise packages everything you need to run Nekaise Agent, an AI-powered bui
 ## Prerequisites
 
 - Docker Engine + Docker Compose plugin
-- Run commands as your regular user (avoid `sudo`)
+- Run commands as your regular user (avoid `sudo`, or you can!)
 
 ---
 
