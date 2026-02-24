@@ -121,22 +121,6 @@ OpenNekaise/
 
 ---
 
-## Customizing the agent
-
-The agent pack lives in `.nekaiseagent/`. Edit the files, commit, and rebuild the image.
-
-| File | Purpose |
-|---|---|
-| `AGENTS.md` | Operating rules — how the agent behaves |
-| `SOUL.md` | Identity — who the agent is |
-| `IDENTITY.md` | Domain expertise and building data paths |
-| `USER.md` | Stakeholder profiles and audience adaptation |
-| `TOOLS.md` | Tool notes and environment config |
-| `HEARTBEAT.md` | Periodic task checklist |
-| `internal-docs/` | Versioned references (ontology, operating doctrine) |
-
----
-
 ## Tracking upstream OpenClaw updates
 
 ```bash
