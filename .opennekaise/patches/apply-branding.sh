@@ -39,7 +39,7 @@ for f in "$PKG"/dist/*.js; do
 
     # Security notice — rebrand OpenClaw references
     patch_file "$f" "OpenClaw is a hobby project and still in beta. Expect sharp edges." \
-        "OpenNekaise is a building energy AI assistant built on OpenClaw. It helps with HVAC, district heating, PV, indoor climate, and building physics."
+        "OpenNekaise is an open-source distribution of OpenClaw that ships Nekaise Agent — an AI agent that interacts with people based on building data you provide."
 
     patch_file "$f" "don't run OpenClaw" "don't run OpenNekaise"
 
