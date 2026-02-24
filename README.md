@@ -1,15 +1,16 @@
 # 🏔️ OpenNekaise
 
-A distribution of [OpenClaw](https://github.com/openclaw/openclaw) that ships **Nekaise Agent** — your virtual building manager.
+OpenNekaise is a distribution of [OpenClaw](https://github.com/openclaw/openclaw) that ships **Nekaise Agent** — your virtual building manager.
 
-OpenNekaise packages everything you need to run Nekaise Agent, an AI-powered building manager that understands HVAC, district heating, PV systems, indoor climate, and building physics. It monitors your buildings, answers questions about energy use and comfort, and helps you act on what matters. Ships as a Docker image with interactive onboarding — bring your own LLM backend and connect your chat channels.
+Nekaise Agent lives in Slack, understands HVAC, district heating, PV systems, BMS, indoor climate, and building physics. 
+It monitors your buildings, answers questions about hardwares, energy use and comfort, and helps you act on what matters. 
 
 ---
 
 ## Prerequisites
 
 - Docker Engine + Docker Compose plugin
-- Run commands as your regular user (avoid `sudo`, or you can!)
+- Run commands as your regular user (avoid `sudo`, or you can if you know what you are doing!)
 
 ---
 
