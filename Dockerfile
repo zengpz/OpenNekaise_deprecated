@@ -46,6 +46,8 @@ VOLUME ["/.opennekaise"]
 
 ENV OPENCLAW_HOME=/.opennekaise
 
+WORKDIR /home
+
 ENTRYPOINT ["/entrypoint.sh"]
 # Default: interactive shell so users can run `opennekaise onboard`
 CMD ["bash"]
