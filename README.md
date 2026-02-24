@@ -51,14 +51,12 @@ The repo ships with sample buildings so you can explore right away:
 
 ```
 home/
-├── axelsdgården-32/           ← Brick model (.ttl)
-├── centraltorp-42/            ← Brick model (.ttl)
-├── duvbacken-2/               ← Brick model (.ttl)
-├── weather-station/           ← Shared weather station (.ttl)
+├── axelsdgården-32/
+├── centraltorp-42/
+├── duvbacken-2/
+├── weather-station/
 └── ...
 ```
-
-Each sample contains a [Brick](https://brickschema.org/) ontology model describing the building's systems, sensors, and zones.
 
 ### Adding your own buildings
 
