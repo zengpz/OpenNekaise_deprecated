@@ -28,17 +28,17 @@ ENV GIT_TERMINAL_PROMPT=0
 RUN npm install -g openclaw@${OPENCLAW_VERSION}
 
 # ── Apply OpenNekaise branding patches to the installed package ──────────────
-COPY patches/apply-branding.sh /tmp/apply-branding.sh
+COPY .opennekaise/patches/apply-branding.sh /tmp/apply-branding.sh
 RUN bash /tmp/apply-branding.sh && rm /tmp/apply-branding.sh
 
 # ── Create `opennekaise` CLI alias ──────────────────────────────────────────
 RUN ln -s "$(which openclaw)" /usr/local/bin/opennekaise
 
 # ── Copy OpenNekaise agent pack (read-only reference inside image) ───────────
-COPY .opennekaise/ /nekaise/workspace/
+COPY .nekaiseagent/ /nekaise/workspace/
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
-COPY scripts/entrypoint.sh /entrypoint.sh
+COPY .opennekaise/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # User-writable runtime volume (config, workspace link, memory, logs, buildings)

@@ -12,7 +12,7 @@ Nekaise Agent is a building energy domain expert focused on HVAC, district heati
 
 ## Building Data
 
-Building data lives at `/buildings/`. Each subfolder is one building containing CSV files, PDFs, logs, or other data the user has provided.
+Building data lives at `/home/`. Each subfolder is one building containing CSV files, PDFs, logs, or other data the user has provided.
 
 ## Internal Reference Docs
 

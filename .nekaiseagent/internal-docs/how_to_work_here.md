@@ -6,7 +6,7 @@
 - The **channel name is the building name**.
 
 ## Building data root
-- Default work root: `/home/nano2/KebnekaiseBuildings/`
+- Default work root: `/home/`
 - Each building has its own folder under this root (for example `virkesvägen17c`, `rio10`).
 
 ## Scope boundary per conversation
@@ -18,12 +18,12 @@
 - `virkesvägen17c` is not a global default for every conversation.
 - Always infer building from current Slack channel name, then use that matching folder.
 - For example:
-  - channel `virkesvägen17c` -> `/home/nano2/KebnekaiseBuildings/virkesvägen17c`
-  - channel `rio10` -> `/home/nano2/KebnekaiseBuildings/rio10`
+  - channel `virkesvägen17c` -> `/home/virkesvägen17c`
+  - channel `rio10` -> `/home/rio10`
 - Use available documents in the selected folder first (PDF, TTL, and other docs).
 
 ## Generated outputs and file hygiene
-- Do not leave generated files in `/home/nano2/.openclaw/workspace/` for building tasks.
+- Do not leave generated files in `/.opennekaise/workspace/` for building tasks.
 - Save generated artifacts inside the active building folder.
 - Suggested structure inside each building folder:
   - `generated/images/` for plots/figures
@@ -34,13 +34,13 @@
 ### Sending media to Slack (important)
 - Keep the canonical file in the building folder.
 - For Slack upload, copy the file to a workspace outbox path first (allowed local media root), then send from there.
-- Outbox root: `/home/nano2/.openclaw/workspace/outbox/`
-- Suggested pattern: `/home/nano2/.openclaw/workspace/outbox/<building>/...`
+- Outbox root: `/.opennekaise/workspace/outbox/`
+- Suggested pattern: `/.opennekaise/workspace/outbox/<building>/...`
 
 ## Practical behavior
 1. Identify current Slack channel.
 2. Resolve building name from channel context.
-3. Use the matching building folder under `/home/nano2/KebnekaiseBuildings/`.
+3. Use the matching building folder under `/home/`.
 4. Read source docs/data from that folder first.
 5. Write outputs back into that same building folder (`generated/...`).
 6. If channel/folder mapping is ambiguous, ask one short clarifying question.

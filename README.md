@@ -2,14 +2,14 @@
 
 Building energy AI assistant — a distribution of [OpenClaw](https://github.com/openclaw/openclaw).
 
-OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV systems, indoor climate, and building physics. It ships as a Docker image — users pull it, run the interactive onboarding wizard, and configure their own LLM backend and chat channels.
+OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV systems, indoor climate, and building physics. It ships as a Docker image — run the interactive onboarding wizard and configure your own LLM backend and chat channels.
 
 ---
 
 ## Prerequisites
 
 - Docker Engine + Docker Compose plugin
-- Run commands as your regular user (avoid `sudo` so `${HOME}` resolves correctly)
+- Run commands as your regular user (avoid `sudo`)
 
 ---
 
@@ -20,13 +20,10 @@ OpenNekaise is a pre-configured OpenClaw agent for HVAC, district heating, PV sy
 git clone https://github.com/zengpz/OpenNekaise.git opennekaise && cd opennekaise
 docker compose build
 
-# 2. Prepare a host folder for building data
-mkdir -p ~/opennekaise-buildings
-
-# 3. Start the container
+# 2. Start the container
 docker compose up -d
 
-# 4. Attach and run the onboarding wizard
+# 3. Attach and run the onboarding wizard
 docker exec -it nekaise bash
 opennekaise onboard
 ```
@@ -37,32 +34,25 @@ The onboarding wizard walks you through:
 - Configuring the gateway
 
 After onboarding, start the gateway:
+
 ```bash
 opennekaise gateway --bind lan
 ```
-
-All user runtime data is persisted in `./.opennekaise/runtime/` on the host and survives container rebuilds.
-Agent pack source files live in `./.opennekaise/` and are baked into the image.
-Onboarding-generated config is stored in `./.opennekaise/runtime/`.
 
 ---
 
 ## Adding your buildings
 
-Place building data folders in your home folder on the host:
+Drop building data folders into `home/` at the repo root:
 
 ```
-~/opennekaise-buildings/
-├── my-building-1/     ← your data (CSV, PDF, logs, etc.)
+home/
+├── my-building-1/     ← CSV, PDF, logs, etc.
 ├── my-building-2/
 └── ...
 ```
 
-Each subfolder represents one building. The folder is mounted into the container as `/buildings/`, and the agent uses `/buildings/` by default.
-If the host folder does not exist, create it with:
-```bash
-mkdir -p ~/opennekaise-buildings
-```
+Each subfolder is one building. The directory is mounted into the container at `/home/`, where the agent looks for building data by default. Contents of `home/` are gitignored — only the directory itself is tracked.
 
 ---
 
@@ -70,51 +60,79 @@ mkdir -p ~/opennekaise-buildings
 
 ```bash
 # Inside the container:
-opennekaise configure       # Re-run the configuration wizard
-opennekaise gateway --bind lan  # Start the gateway
+opennekaise configure            # Re-run the configuration wizard
+opennekaise gateway --bind lan   # Start the gateway
 
 # On the host:
-docker compose logs -f      # Follow logs
-docker compose down         # Stop
-docker compose build        # Rebuild after changes
+docker compose logs -f           # Follow logs
+docker compose down              # Stop
+docker compose build             # Rebuild after changes
 ```
+
+---
+
+## Project structure
+
+```
+OpenNekaise/
+├── .nekaiseagent/             ← Agent pack (baked read-only into image)
+│   ├── AGENTS.md              ← Operating rules
+│   ├── SOUL.md                ← Core identity
+│   ├── IDENTITY.md            ← Domain expertise definition
+│   ├── USER.md                ← Stakeholder profiles + audience adaptation
+│   ├── TOOLS.md               ← Tool notes and environment config
+│   ├── HEARTBEAT.md           ← Periodic task checklist
+│   ├── internal-docs/         ← Ontology + operating references
+│   └── skills/                ← Custom skills
+├── .opennekaise/              ← Project infra (OpenClaw → OpenNekaise)
+│   ├── patches/               ← Branding patches
+│   ├── scripts/               ← Entrypoint and helpers
+│   └── runtime/               ← Runtime state (gitignored, volume-mounted)
+├── home/                      ← Building data (volume-mounted into container)
+├── Dockerfile
+├── docker-compose.yml
+├── .env / .env.example
+└── README.md
+```
+
+### What lives where
+
+| Directory | Role | In image? | Persisted? |
+|---|---|---|---|
+| `.nekaiseagent/` | Agent brain — persona, rules, domain knowledge | Baked in read-only | N/A (source in repo) |
+| `.opennekaise/patches/`, `scripts/` | Build-time infra — branding, entrypoint | Used during build | N/A (source in repo) |
+| `.opennekaise/runtime/` | Runtime state — config, memory, logs | Volume-mounted | Yes (survives rebuilds) |
+| `home/` | User building data | Volume-mounted at `/home/` | Yes (on host) |
 
 ---
 
 ## Customizing the agent
 
-### Agent pack files (baked into the image)
-
-The agent's core design files live in `./.opennekaise/` and are baked read-only into the Docker image. Edit them here, commit, and rebuild.
+The agent pack lives in `.nekaiseagent/`. Edit the files, commit, and rebuild the image.
 
 | File | Purpose |
 |---|---|
-| `.opennekaise/AGENTS.md` | Operating rules — how the agent behaves |
-| `.opennekaise/SOUL.md` | Identity — who the agent is |
-| `.opennekaise/IDENTITY.md` | Domain expertise definition |
-| `.opennekaise/USER.md` | Stakeholder profiles + audience adaptation |
-| `.opennekaise/TOOLS.md` | Tool notes and environment config |
-| `.opennekaise/HEARTBEAT.md` | Periodic task checklist |
-| `.opennekaise/internal-docs/` | Versioned internal references (ontology + operating doctrine) |
-
-Runtime state is separate and not versioned: `./.opennekaise/runtime/` (mounted into the container).
+| `AGENTS.md` | Operating rules — how the agent behaves |
+| `SOUL.md` | Identity — who the agent is |
+| `IDENTITY.md` | Domain expertise and building data paths |
+| `USER.md` | Stakeholder profiles and audience adaptation |
+| `TOOLS.md` | Tool notes and environment config |
+| `HEARTBEAT.md` | Periodic task checklist |
+| `internal-docs/` | Versioned references (ontology, operating doctrine) |
 
 ---
 
 ## Tracking upstream OpenClaw updates
 
 ```bash
-# 1. (Optional) create .env if you want overrides
+# 1. Create .env from the example (if you haven't already)
 cp .env.example .env
 
 # 2. Update OPENCLAW_VERSION in .env
 OPENCLAW_VERSION=2026.x.x
 
-# 3. Rebuild
-docker compose build
-
-# 4. Restart
-docker compose up -d
+# 3. Rebuild and restart
+docker compose build && docker compose up -d
 ```
 
 ---
@@ -122,19 +140,20 @@ docker compose up -d
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                     User data (volume)                    │
-│  ~/opennekaise-buildings/        ← building data (CSV…)   │
-│  ./.opennekaise/runtime/           ← config, memory, logs│
-│  Persisted on host, survives container rebuilds           │
-├──────────────────────────────────────────────────────────┤
-│              OpenNekaise layer (this repo)                │
-│  .opennekaise/ ← agent pack source (baked read-only)     │
-│  patches/     ← branding patches                         │
-│  scripts/     ← entrypoint.sh                            │
-├──────────────────────────────────────────────────────────┤
-│              OpenClaw (npm package, pinned version)       │
-│  Installed inside Docker image via npm install -g        │
-│  Version pinned in .env (OPENCLAW_VERSION)               │
-└──────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  User data (volumes, persisted on host)                     │
+│                                                             │
+│   ./home/                    building data (CSV, PDF, …)    │
+│   ./.opennekaise/runtime/    config, memory, logs           │
+├─────────────────────────────────────────────────────────────┤
+│  OpenNekaise layer (this repo)                              │
+│                                                             │
+│   .nekaiseagent/   agent pack — baked read-only into image  │
+│   .opennekaise/    project infra — patches, entrypoint      │
+├─────────────────────────────────────────────────────────────┤
+│  OpenClaw (npm package, pinned version)                     │
+│                                                             │
+│   Installed via npm install -g inside Docker image          │
+│   Version pinned in .env (OPENCLAW_VERSION)                 │
+└─────────────────────────────────────────────────────────────┘
 ```

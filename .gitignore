@@ -7,6 +7,9 @@
 # Runtime memory logs
 /.opennekaise/runtime/memory/
 
+# Building data contents (keep home/ dir via .gitkeep)
+/home/*/
+
 # OS / editor
 .DS_Store
 *.swp

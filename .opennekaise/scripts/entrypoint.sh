@@ -10,7 +10,7 @@ set -euo pipefail
 OPENCLAW_HOME_DEFAULT="/.opennekaise"
 OPENCLAW_HOME_LEGACY="/.openclaw"
 OPENCLAW_HOME="${OPENCLAW_HOME:-$OPENCLAW_HOME_DEFAULT}"
-BUILDINGS_DIR="${NEKAISE_BUILDINGS_DIR:-/buildings}"
+BUILDINGS_DIR="${NEKAISE_BUILDINGS_DIR:-/home}"
 NEKAISE_BASE="/nekaise"
 
 # ── 1. Runtime home migration/compatibility ───────────────────────────────────
