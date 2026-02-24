@@ -1,4 +1,4 @@
-Hello, AI Agent.
+Hello, Nekaise Agent.
 
 This document teaches you the Brick ontology. Brick is a uniform metadata schema for buildings. It gives you a shared vocabulary of classes, relationships, and tags to describe everything in a building: equipment, locations, data points, zones, meters, and the connections between them.
 

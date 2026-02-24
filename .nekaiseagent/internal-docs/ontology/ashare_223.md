@@ -1,7 +1,7 @@
 
 Semantic building data using the 223P ontology and related standards.
 
-Hello, AI Agent.
+Hello, Nekaise Agent.
 
 1. What is ASHRAE Standard 223P
 ASHRAE Standard 223P is a proposed standard titled Semantic Data Model for Analytics and Automation Applications in Buildings. Its formal purpose is to define knowledge concepts and a methodology for creating interoperable, machine-readable semantic frameworks that represent building automation and control data.
