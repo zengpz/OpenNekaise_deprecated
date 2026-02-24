@@ -1,0 +1,189 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix ct42: <https://nekaise.com/KebTown/Centraltorp42#> .
+@prefix keb: <https://nekaise.com/KebGraph#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ct42:Centraltorp42 a keb:Set ;
+    keb:cnx ct42:Floor1,
+        ct42:Floor2,
+        ct42:KB01,
+        ct42:VS01 ;
+    keb:hasCaption """Centraltorp 42
+Address: Centraltorpsvägen 42, Stockholm
+Built/rebuilt: 1990/2018
+Environmental certification: Miljöbyggnad Silver
+Office: 450 m2
+A small office building with 2 floors. Floor 1 is the reception area, Floor 2 has 3 office rooms with individual climate control. Connected to district heating and cooling."""^^xsd:string .
+
+ct42:Floor1 a keb:Set ;
+    keb:hasActor ct42:Floor1_GH11,
+        ct42:Floor1_GQ41,
+        ct42:Floor1_GT11,
+        ct42:Floor1_Radiator1,
+        ct42:Floor1_Radiator2,
+        ct42:Floor1_SV21 ;
+    keb:hasCaption "1st Floor - Reception area with waiting zone, front desk, and small meeting corner. Heated by radiators and monitored by indoor sensors."^^xsd:string .
+
+ct42:Floor1_GH11 a keb:Actor,
+        brick:Humidity_Sensor ;
+    keb:hasCaption "Reception area humidity sensor. Target range: 30-60% RH. Database ID: xxx"^^xsd:string .
+
+ct42:Floor1_GQ41 a keb:Actor,
+        brick:CO2_Sensor ;
+    keb:hasCaption "Reception area CO2 sensor. Lower limit: 600ppm. Upper limit: 800ppm. Located in waiting zone. Database ID: xxx"^^xsd:string .
+
+ct42:Floor1_GT11 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Reception area temperature sensor. Setpoint: 21C. Located near front desk. Database ID: xxx"^^xsd:string .
+
+ct42:Floor1_Radiator1 a keb:Actor,
+        brick:Radiator ;
+    keb:hasCaption "Reception area main radiator near entrance. Provides heating for the front desk area. Database ID: xxx"^^xsd:string .
+
+ct42:Floor1_Radiator2 a keb:Actor,
+        brick:Radiator ;
+    keb:hasCaption "Reception area radiator in waiting zone. Provides heating for visitor seating area. Database ID: xxx"^^xsd:string .
+
+ct42:Floor1_SV21 a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Reception radiator control valve. Controls heat to the main radiator circuit on Floor 1. Database ID: xxx"^^xsd:string .
+
+ct42:Floor2 a keb:Set ;
+    keb:cnx ct42:Room_02_A1,
+        ct42:Room_02_B2,
+        ct42:Room_02_C3 ;
+    keb:hasCaption "2nd Floor - Office space with 3 rooms. Each room has individual climate control with temperature, CO2 sensors, dampers, and control valves for heating/cooling."^^xsd:string .
+
+ct42:KB01 a keb:Set ;
+    keb:hasActor ct42:KB01_Flow,
+        ct42:KB01_SupplyTemp ;
+    keb:hasCaption "KB01 - Cooling system. Provides chilled water for room cooling via ceiling-mounted cooling baffles."^^xsd:string .
+
+ct42:KB01_Flow a keb:Actor,
+        brick:Flow_Sensor ;
+    keb:hasCaption "KB01 cooling system flow sensor. Unit: L/s. Log interval: 10 min. Database ID: xxx"^^xsd:string .
+
+ct42:KB01_SupplyTemp a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "KB01 cooling system supply temperature. Unit: Celsius. Log interval: 10 min. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_A1 a keb:Set ;
+    keb:hasActor ct42:Room_02_A1_GQ41,
+        ct42:Room_02_A1_GT11,
+        ct42:Room_02_A1_ST4x,
+        ct42:Room_02_A1_SV2x,
+        ct42:Room_02_A1_SV4x ;
+    keb:hasCaption "Room ID: 02-A1, Room type: 301 (Standard office). Climate controlled with heating, cooling, and ventilation. Seats 2-4 people."^^xsd:string .
+
+ct42:Room_02_A1_GQ41 a keb:Actor,
+        brick:CO2_Sensor ;
+    keb:hasCaption "Room 02-A1 CO2 sensor. Lower limit: 600ppm. Upper limit: 800ppm. High CO2: >1000ppm. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_A1_GT11 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Room 02-A1 temperature sensor. Setpoint: 22C. Deadzone economy: 4C. Deadzone comfort: 2C. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_A1_ST4x a keb:Actor,
+        brick:Damper ;
+    keb:hasCaption "Room 02-A1 air damper. Controls airflow 0-100%. Deviation limit: +-15%. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_A1_SV2x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-A1 SV2x heating control valve for radiator. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_A1_SV4x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-A1 SV4x cooling control valve. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_B2 a keb:Set ;
+    keb:hasActor ct42:Room_02_B2_GQ41,
+        ct42:Room_02_B2_GT11,
+        ct42:Room_02_B2_ST4x,
+        ct42:Room_02_B2_SV2x,
+        ct42:Room_02_B2_SV4x ;
+    keb:hasCaption "Room ID: 02-B2, Room type: 305 (Meeting room). Higher ventilation capacity for occupancy variations. Seats up to 8 people."^^xsd:string .
+
+ct42:Room_02_B2_GQ41 a keb:Actor,
+        brick:CO2_Sensor ;
+    keb:hasCaption "Room 02-B2 CO2 sensor. Lower limit: 600ppm. Upper limit: 800ppm. High CO2: >1000ppm. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_B2_GT11 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Room 02-B2 temperature sensor. Setpoint: 22C. Meeting room with higher occupancy variation. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_B2_ST4x a keb:Actor,
+        brick:Damper ;
+    keb:hasCaption "Room 02-B2 air damper. Higher max airflow for meeting room occupancy. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_B2_SV2x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-B2 SV2x heating control valve for radiator. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_B2_SV4x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-B2 SV4x cooling control valve. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3 a keb:Set ;
+    keb:hasActor ct42:Room_02_C3_CAKx,
+        ct42:Room_02_C3_GQ41,
+        ct42:Room_02_C3_GT11,
+        ct42:Room_02_C3_ST4x,
+        ct42:Room_02_C3_SV2x,
+        ct42:Room_02_C3_SV40x,
+        ct42:Room_02_C3_SV4x ;
+    keb:hasCaption """Room ID: 02-C3, Room type: 301C (Office with fan coil).
+Has CAKx fan and SV40x cooling actuator for enhanced cooling.
+Control sequence: CAKx varies down -> SV40x closes -> SV4x closes -> ST4x to min -> SV2x opens for heat.
+Reversed for cooling demand. Corner office with extra solar load."""^^xsd:string .
+
+ct42:Room_02_C3_CAKx a keb:Actor,
+        brick:Fan ;
+    keb:hasCaption "Room 02-C3 CAKx fan coil unit fan. Speed controlled for enhanced cooling. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3_GQ41 a keb:Actor,
+        brick:CO2_Sensor ;
+    keb:hasCaption "Room 02-C3 CO2 sensor. Lower limit: 600ppm. Upper limit: 800ppm. High CO2: >1000ppm. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3_GT11 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Room 02-C3 temperature sensor. Setpoint: 22C. Corner office with extra solar load. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3_ST4x a keb:Actor,
+        brick:Damper ;
+    keb:hasCaption "Room 02-C3 air damper. Controls airflow 0-100%. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3_SV2x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-C3 SV2x heating control valve for radiator. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3_SV40x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-C3 SV40x cooling actuator for fan air cooler. Database ID: xxx"^^xsd:string .
+
+ct42:Room_02_C3_SV4x a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "Room 02-C3 SV4x cooling control valve. Database ID: xxx"^^xsd:string .
+
+ct42:VS01 a keb:Set ;
+    keb:hasActor ct42:VS01_Flow,
+        ct42:VS01_Power,
+        ct42:VS01_SV21,
+        ct42:VS01_SupplyTemp ;
+    keb:hasCaption "VS01 - Heating system for radiators. District heating connection provides hot water to radiators throughout the building."^^xsd:string .
+
+ct42:VS01_Flow a keb:Actor,
+        brick:Flow_Sensor ;
+    keb:hasCaption "VS01 heating system flow sensor. Unit: L/s. Log interval: 10 min. Database ID: xxx"^^xsd:string .
+
+ct42:VS01_Power a keb:Actor,
+        brick:Thermal_Power_Sensor ;
+    keb:hasCaption "VS01 heating system thermal power. Unit: W. Log interval: 10 min. Database ID: xxx"^^xsd:string .
+
+ct42:VS01_SV21 a keb:Actor,
+        brick:Valve ;
+    keb:hasCaption "VS01 SV21 main control valve for heating circuit. Unit: %. Log interval: 10 min. Database ID: xxx"^^xsd:string .
+
+ct42:VS01_SupplyTemp a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "VS01 heating system supply temperature. Unit: Celsius. Log interval: 10 min. Database ID: xxx"^^xsd:string .
+

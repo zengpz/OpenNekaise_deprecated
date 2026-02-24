@@ -1,0 +1,48 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix keb: <https://nekaise.com/KebGraph#> .
+@prefix ws: <https://nekaise.com/KebTown/WeatherStation/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ws:Weather_Station a keb:Set ;
+    keb:hasActor ws:DD_deg,
+        ws:FF_ms,
+        ws:FH_ms,
+        ws:FX_ms,
+        ws:Q_J_per_cm2,
+        ws:Q_Wm2_avg,
+        ws:T_C,
+        ws:U_pct ;
+    keb:hasCaption "Weather station (fictional site). Provides wind, irradiance, temperature, and humidity."^^xsd:string .
+
+ws:DD_deg a keb:Actor,
+        brick:Wind_Direction_Sensor ;
+    keb:hasCaption "Mean wind direction over the last 10 minutes, in degrees (meteorological convention). Special codes: 0 = calm, 990 = variable. Database ID: 5f982d58a3d35672"^^xsd:string .
+
+ws:FF_ms a keb:Actor,
+        brick:Wind_Speed_Sensor ;
+    keb:hasCaption "Mean wind speed over the last 10 minutes, in m/s. Database ID: c233b325253fe940"^^xsd:string .
+
+ws:FH_ms a keb:Actor,
+        brick:Wind_Speed_Sensor ;
+    keb:hasCaption "Hourly mean wind speed, in m/s. Database ID: 4ff2804cf5a9326a"^^xsd:string .
+
+ws:FX_ms a keb:Actor,
+        brick:Wind_Speed_Sensor ;
+    keb:hasCaption "Maximum wind gust observed during the hour, in m/s. Database ID: b106e560d26a1693"^^xsd:string .
+
+ws:Q_J_per_cm2 a keb:Actor,
+        brick:Irradiance_Sensor ;
+    keb:hasCaption "Global solar radiation energy accumulated over the hour, in J/cm2. Database ID: 170a85402a4f6473"^^xsd:string .
+
+ws:Q_Wm2_avg a keb:Actor,
+        brick:Irradiance_Sensor ;
+    keb:hasCaption "Hourly mean irradiance in W/m2, converted from Q_J_per_cm2 via: Q_Wm2_avg = Q_J_per_cm2 * 10000 / 3600 (average power over that hour). Database ID: ed6532513e5a2f85"^^xsd:string .
+
+ws:T_C a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Air temperature at 1.5 m height, in C. Database ID: 3e110c5420155141"^^xsd:string .
+
+ws:U_pct a keb:Actor,
+        brick:Humidity_Sensor ;
+    keb:hasCaption "Relative humidity at 1.5 m, in %. Database ID: 3f49c6870510a139"^^xsd:string .
+

@@ -41,18 +41,35 @@ opennekaise gateway --bind lan
 
 ---
 
-## Adding your buildings
+## Building data
 
-Drop building data folders into `home/` at the repo root:
+Building data lives in `home/`. Each subfolder is one building. The directory is mounted into the container at `/home/`, where the agent looks for building data by default.
+
+### Sample buildings (included)
+
+The repo ships with sample buildings so you can explore right away:
 
 ```
 home/
-├── my-building-1/     ← CSV, PDF, logs, etc.
-├── my-building-2/
+├── axelsdgården-32/           ← Brick model (.ttl)
+├── centraltorp-42/            ← Brick model (.ttl)
+├── duvbacken-2/               ← Brick model (.ttl)
+├── weather-station/           ← Shared weather station (.ttl)
 └── ...
 ```
 
-Each subfolder is one building. The directory is mounted into the container at `/home/`, where the agent looks for building data by default. Contents of `home/` are gitignored — only the directory itself is tracked.
+Each sample contains a [Brick](https://brickschema.org/) ontology model describing the building's systems, sensors, and zones.
+
+### Adding your own buildings
+
+Drop your building data folders into `home/` — CSV files, PDFs, logs, TTL models, anything the agent should have access to:
+
+```
+home/
+├── axelsdgården-32/           ← sample (tracked in git)
+├── my-building/               ← your data (add to .gitignore if private)
+└── ...
+```
 
 ---
 

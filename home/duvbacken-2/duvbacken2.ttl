@@ -1,0 +1,66 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix duv2: <https://nekaise.com/KebTown/Duvbacken2/> .
+@prefix keb: <https://nekaise.com/KebGraph#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+duv2:Duvbacken2 a keb:Set ;
+    keb:cnx duv2:Indoor_Sensors,
+        duv2:PV_Panels ;
+    keb:hasCaption "Duvbacken 2 is a fictional single-family residence equipped with 12 PV panels and one inverter. The building has mains voltage monitoring on two phases and indoor sensors."^^xsd:string .
+
+duv2:Bedroom_RH_pct a keb:Actor,
+        brick:Humidity_Sensor ;
+    keb:hasCaption "Bedroom relative humidity. Data path: /data/kebtown/duvbacken2/indoor/bedroom_rh_pct.csv"^^xsd:string .
+
+duv2:Bedroom_T_C a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Bedroom air temperature. Data path: /data/kebtown/duvbacken2/indoor/bedroom_t_c.csv"^^xsd:string .
+
+duv2:Hall_Occupancy a keb:Actor,
+        brick:Occupancy_Sensor ;
+    keb:hasCaption "Hall occupancy sensor. Data path: /data/kebtown/duvbacken2/indoor/hall_occupancy.csv"^^xsd:string .
+
+duv2:Indoor_Sensors a keb:Set ;
+    keb:hasActor duv2:Bedroom_RH_pct,
+        duv2:Bedroom_T_C,
+        duv2:Hall_Occupancy,
+        duv2:LivingRoom_CO2_ppm,
+        duv2:LivingRoom_Illuminance,
+        duv2:LivingRoom_RH_pct,
+        duv2:LivingRoom_T_C,
+        duv2:Smoke_Alarm ;
+    keb:hasCaption "Indoor sensor group for living room and bedroom. Provides temperature, humidity, CO2, occupancy, illuminance, and smoke detection signals."^^xsd:string .
+
+duv2:LivingRoom_CO2_ppm a keb:Actor,
+        brick:CO2_Sensor ;
+    keb:hasCaption "Living room CO2 concentration. Data path: /data/kebtown/duvbacken2/indoor/livingroom_co2_ppm.csv"^^xsd:string .
+
+duv2:LivingRoom_Illuminance a keb:Actor,
+        brick:Illuminance_Sensor ;
+    keb:hasCaption "Living room illuminance. Data path: /data/kebtown/duvbacken2/indoor/livingroom_lux.csv"^^xsd:string .
+
+duv2:LivingRoom_RH_pct a keb:Actor,
+        brick:Humidity_Sensor ;
+    keb:hasCaption "Living room relative humidity. Data path: /data/kebtown/duvbacken2/indoor/livingroom_rh_pct.csv"^^xsd:string .
+
+duv2:LivingRoom_T_C a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "Living room air temperature. Data path: /data/kebtown/duvbacken2/indoor/livingroom_t_c.csv"^^xsd:string .
+
+duv2:PV_Panels a keb:Set ;
+    keb:hasActor duv2:PV_V,
+        duv2:PV_W ;
+    keb:hasCaption "12 photovoltaic panels. Each panel has a capacity of 350 W, totaling 4.2 kW."^^xsd:string .
+
+duv2:PV_V a keb:Actor,
+        brick:Voltage_Sensor ;
+    keb:hasCaption "PV inverter voltage. Data path: /data/kebtown/duvbacken2/pv/pv_v.csv"^^xsd:string .
+
+duv2:PV_W a keb:Actor,
+        brick:Voltage_Sensor ;
+    keb:hasCaption "PV power output (W). Data path: /data/kebtown/duvbacken2/pv/pv_w.csv"^^xsd:string .
+
+duv2:Smoke_Alarm a keb:Actor,
+        brick:Smoke_Detector ;
+    keb:hasCaption "Smoke alarm status. Data path: /data/kebtown/duvbacken2/indoor/smoke_alarm.csv"^^xsd:string .
+

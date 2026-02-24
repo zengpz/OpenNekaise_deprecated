@@ -1,0 +1,163 @@
+@prefix axg32: <https://nekaise.com/KebTown/Axelsdgården32#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix keb: <https://nekaise.com/KebGraph#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+axg32:Axelsdgården32 a keb:Set ;
+    keb:cnx axg32:DWH,
+        axg32:FTX,
+        axg32:SpaceHeating ;
+    keb:hasCaption "Axelsdgården 32 Multifamily House, a student housing building with 3 floors and 4 apartments per floor. It is heated by radiators and ventilation, connected to district heating, and equipped with a ventilation system with heat recovery"^^xsd:string .
+
+axg32:DWH a keb:Set ;
+    keb:hasActor axg32:GT11_DHW,
+        axg32:P12,
+        axg32:SV1_DHW,
+        axg32:VM1,
+        axg32:VVX1_DHW ;
+    keb:hasCaption "Domestic Hot Water (DHW) system. Hot water is produced via a heat exchanger (VVX1) connected to district heating. The system includes a control valve (SV1), circulation pump (P12), temperature sensor (GT11), and water meter (VM1)."^^xsd:string .
+
+axg32:Exhaustairduct a keb:Set ;
+    keb:hasActor axg32:FF,
+        axg32:GP12,
+        axg32:GT43,
+        axg32:GX72 ;
+    keb:hasCaption "This duct handles exhaust air and redirects it to a heat exchanger, where it preheats the inlet air."^^xsd:string .
+
+axg32:FF a keb:Actor,
+        brick:Exhaust_Fan ;
+    keb:hasCaption "This fan moving exhaust air, and its fan efficiency data is stored in: xxx"^^xsd:string .
+
+axg32:FTX a keb:Set ;
+    keb:cnx axg32:Exhaustairduct,
+        axg32:Inletairduct,
+        axg32:Outletairduct,
+        axg32:Supplyairduct,
+        axg32:VVX ;
+    keb:hasCaption "FTX is a heat recovery ventilation system, also known as an FTX system, which is common in Sweden. It consists of four ducts—inlet, supply, exhaust, and outlet—that deliver conditioned air to a residential building."^^xsd:string .
+
+axg32:GP11 a keb:Actor,
+        brick:Pressure_Sensor ;
+    keb:hasCaption "This is a pressure sensor, and its data is stored at: xxx"^^xsd:string .
+
+axg32:GP12 a keb:Actor,
+        brick:Pressure_Sensor ;
+    keb:hasCaption "This is a pressure sensor, and its data is stored at: xxx"^^xsd:string .
+
+axg32:GT11 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "GT11 is a temperature sensor that measures the temperature of the air after it passes through the heating battery, which supplies heated air to the apartments. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GT11_DHW a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "GT11 is a temperature sensor that measures the domestic hot water temperature. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GT11_SH a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "GT11 is a temperature sensor that measures the supply water temperature to the radiators. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GT41 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "This temperature sensor (tagged GT41) measures the inlet air, and its data is stored in the file located at: xxx"^^xsd:string .
+
+axg32:GT41_SH a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "GT41 is a temperature sensor that measures the return water temperature from the radiators. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GT42 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "This temperature sensor measures the temperature in the supply air duct before the heating battery, capturing the air temperature after it has been preheated by the exhaust air. The data is stored in: xxx"^^xsd:string .
+
+axg32:GT43 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "GT43 is the temperature sensor that measures the temperature of the exhaust air. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GT81 a keb:Actor,
+        brick:Temperature_Sensor ;
+    keb:hasCaption "GT81 is the temperature sensor that measures the temperature of the heating battery. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GX71 a keb:Actor,
+        brick:Smoke_Detector ;
+    keb:hasCaption "GX71 is a smoke detector designed to generate alarms. Its data is stored at: xxx"^^xsd:string .
+
+axg32:GX72 a keb:Actor,
+        brick:Smoke_Detector ;
+    keb:hasCaption "GX72 is a smoke detector designed to generate alarms. Its data is stored at: xxx"^^xsd:string .
+
+axg32:Inletairduct a keb:Set ;
+    keb:hasActor axg32:GT41,
+        <https://Nekaise.com/KebTown/Axelsdgården32#ST2:1>,
+        axg32:TF ;
+    keb:hasCaption "This duct brings fresh air from outside into the heat exchanger, where it is preheated by the exhaust air."^^xsd:string .
+
+axg32:Outletairduct a keb:Set ;
+    keb:hasActor <https://Nekaise.com/KebTown/Axelsdgården32#ST2:2> ;
+    keb:hasCaption "This duct expels the exhaust air from the building after it has passed through the heat exchanger."^^xsd:string .
+
+axg32:P12 a keb:Actor,
+        brick:Hot_Water_Pump ;
+    keb:hasCaption "P12 is the hot water circulation pump for the DHW system. Its status data is stored at: xxx"^^xsd:string .
+
+axg32:P21 a keb:Actor,
+        brick:Hot_Water_Pump ;
+    keb:hasCaption "P21 is the hot water circulation pump for the space heating system. Its status data is stored at: xxx"^^xsd:string .
+
+<https://Nekaise.com/KebTown/Axelsdgården32#ST2:1> a keb:Actor,
+        brick:Outside_Damper ;
+    keb:hasCaption "A damper connects the inlet air duct to the supply air duct, and its position data is stored at: xxx"^^xsd:string .
+
+<https://Nekaise.com/KebTown/Axelsdgården32#ST2:2> a keb:Actor,
+        brick:Exhaust_Damper ;
+    keb:hasCaption "A damper connects the exhaust air duct to the outlet air duct, and its position data is stored at: xxx"^^xsd:string .
+
+axg32:SV1 a keb:Actor,
+        brick:Hot_Water_Valve ;
+    keb:hasCaption "SV1 is the control valve that regulates heat from the district heating system. Its data is stored at: xxx"^^xsd:string .
+
+axg32:SV1_DHW a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "SV1 is the control valve that regulates heat from district heating to the DHW heat exchanger. Its position data is stored at: xxx"^^xsd:string .
+
+axg32:SV21 a keb:Actor,
+        brick:Control_Valve ;
+    keb:hasCaption "SV21 is the control valve that regulates heat from district heating to the space heating system. Its position data is stored at: xxx"^^xsd:string .
+
+axg32:SpaceHeating a keb:Set ;
+    keb:hasActor axg32:GT11_SH,
+        axg32:GT41_SH,
+        axg32:P21,
+        axg32:SV21,
+        axg32:VVX1_SH ;
+    keb:hasCaption "Space Heating system with radiators. Heat is transferred from district heating via a heat exchanger (VVX1). The system includes a control valve (SV21), circulation pump (P21), supply temperature sensor (GT11), and return temperature sensor (GT41)."^^xsd:string .
+
+axg32:Supplyairduct a keb:Set ;
+    keb:hasActor axg32:GP11,
+        axg32:GT11,
+        axg32:GT42,
+        axg32:GT81,
+        axg32:GX71,
+        axg32:SV1 ;
+    keb:hasCaption "This duct delivers the preheated fresh air from the heat exchanger into the building."^^xsd:string .
+
+axg32:TF a keb:Actor,
+        brick:Outside_Fan ;
+    keb:hasCaption "This fan supplies air from outside, and its efficiency data is stored in: xxx"^^xsd:string .
+
+axg32:VM1 a keb:Actor,
+        brick:Building_Hot_Water_Meter ;
+    keb:hasCaption "VM1 is the hot water meter (VattenMätare) that measures domestic hot water consumption. Its data is stored at: xxx"^^xsd:string .
+
+axg32:VVX a keb:Actor,
+        keb:Set,
+        brick:Heat_Exchanger ;
+    keb:hasCaption "The heat exchanger (VVX) transfers heat from the exhaust air to the inlet air, improving energy efficiency."^^xsd:string,
+        "This is a heat exchanger that can use exhaust air to preheat the inlet air to save energy. The efficiency of this heat exchanger is stored in: xxx"^^xsd:string .
+
+axg32:VVX1_DHW a keb:Actor,
+        brick:Heat_Exchanger ;
+    keb:hasCaption "VVX1 is the heat exchanger that transfers heat from district heating to domestic hot water. Its data is stored at: xxx"^^xsd:string .
+
+axg32:VVX1_SH a keb:Actor,
+        brick:Heat_Exchanger ;
+    keb:hasCaption "VVX1 is the heat exchanger that transfers heat from district heating to the space heating loop. Its data is stored at: xxx"^^xsd:string .
+

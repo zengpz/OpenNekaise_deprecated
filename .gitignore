@@ -7,8 +7,9 @@
 # Runtime memory logs
 /.opennekaise/runtime/memory/
 
-# Building data contents (keep home/ dir via .gitkeep)
-/home/*/
+# User building data (keep sample buildings tracked)
+# To ignore your own buildings, add them here or use a local .git/info/exclude
+
 
 # OS / editor
 .DS_Store
