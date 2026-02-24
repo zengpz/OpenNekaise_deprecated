@@ -15,4 +15,4 @@ services:
       - ./.opennekaise/runtime:/.opennekaise
       - ./home:/home
     ports:
-      - "${GATEWAY_PORT:-18789}:18789"
+      - "${GATEWAY_PORT:-20629}:18789"
