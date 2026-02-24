@@ -29,8 +29,8 @@ opennekaise onboard
 ```
 
 The onboarding wizard walks you through:
-- Choosing your LLM backend (OpenAI, Anthropic, local models, etc.)
-- Setting up chat channels (Telegram, Slack, Discord)
+- Choosing your LLM backend (OpenAI, Anthropic, OpenRouter)
+- Setting up chat channels (Telegram, WhatsApp, Slack)
 - Configuring the gateway
 
 After onboarding, start the gateway:
