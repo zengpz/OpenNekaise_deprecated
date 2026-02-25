@@ -66,7 +66,21 @@ elif [ -d "$OPENCLAW_HOME/workspace" ] && [ ! -L "$OPENCLAW_HOME/workspace" ]; t
     echo "[opennekaise] Remove it to use the default read-only workspace."
 fi
 
-# ── 4. Run user command ──────────────────────────────────────────────────────
+# ── 4. Patch OpenClaw config to use our workspace ────────────────────────────
+# The configure wizard sets its own workspace path. Override it every start
+# so the agent always loads the OpenNekaise agent pack.
+OC_CONFIG="$OPENCLAW_HOME/.openclaw/openclaw.json"
+NEKAISE_WORKSPACE="$OPENCLAW_HOME/workspace"
+if [ -f "$OC_CONFIG" ] && command -v jq >/dev/null 2>&1; then
+    CURRENT_WS="$(jq -r '.agents.defaults.workspace // empty' "$OC_CONFIG")"
+    if [ -n "$CURRENT_WS" ] && [ "$CURRENT_WS" != "$NEKAISE_WORKSPACE" ]; then
+        jq --arg ws "$NEKAISE_WORKSPACE" '.agents.defaults.workspace = $ws' "$OC_CONFIG" > /tmp/oc-patch.json \
+            && mv /tmp/oc-patch.json "$OC_CONFIG"
+        echo "[opennekaise] Patched workspace path: $CURRENT_WS -> $NEKAISE_WORKSPACE"
+    fi
+fi
+
+# ── 5. Run user command ──────────────────────────────────────────────────────
 # If no args or just "bash", drop into interactive shell
 # If args like "gateway --bind lan", pass through to openclaw
 export OPENCLAW_HOME
@@ -77,7 +91,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "bash" ]; then
     echo ""
     echo "  Get started:   opennekaise onboard"
     echo "  Configure:     opennekaise configure"
-    echo "  Start gateway: opennekaise gateway --bind lan"
+    echo "  Start gateway: opennekaise gateway"
     echo ""
     echo "  Building data: $BUILDINGS_DIR/"
     echo ""
