@@ -25,8 +25,7 @@ docker compose build
 docker compose up -d
 
 # 3. Attach and run the onboarding wizard
-docker exec -it nekaise bash
-opennekaise onboard
+docker exec -it nekaise opennekaise onboard
 ```
 
 The onboarding wizard walks you through:
@@ -34,10 +33,10 @@ The onboarding wizard walks you through:
 - Setting up chat channels (Telegram, WhatsApp, Slack)
 - Configuring the gateway
 
-After onboarding, start the gateway:
+After onboarding, start the gateway (runs in background):
 
 ```bash
-opennekaise gateway
+docker exec -d nekaise opennekaise gateway
 ```
 
 ---
