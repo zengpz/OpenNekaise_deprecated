@@ -5,6 +5,9 @@
 - In Slack, each building channel corresponds to one building.
 - The **channel name is the building name**.
 
+IF channel is #<building>, THEN use /home/<building>/ first.
+IF building data exists, DO NOT answer generically before checking it.
+
 ## Building data root
 - Default work root: `/home/`
 - Each building has its own folder under this root (e.g., `<building-slug>`).
