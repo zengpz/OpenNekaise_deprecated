@@ -7,8 +7,12 @@
 # Runtime memory logs
 /.opennekaise/runtime/memory/
 
-# User building data (keep sample buildings tracked)
-# To ignore your own buildings, add them here or use a local .git/info/exclude
+# User building data — whitelist only sample buildings
+/home/*
+!/home/axelsdgården-32/
+!/home/centraltorp-42/
+!/home/duvbacken-2/
+!/home/weather-station/
 
 
 # OS / editor
