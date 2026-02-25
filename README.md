@@ -37,7 +37,7 @@ The onboarding wizard walks you through:
 After onboarding, start the gateway:
 
 ```bash
-opennekaise gateway --bind lan
+opennekaise gateway
 ```
 
 ---
@@ -75,7 +75,7 @@ To add a building, just drop a folder into `home/` with your CSV files, PDFs, lo
 ```bash
 # Inside the container:
 opennekaise configure            # Re-run the configuration wizard
-opennekaise gateway --bind lan   # Start the gateway
+opennekaise gateway   # Start the gateway
 
 # On the host:
 docker compose logs -f           # Follow logs
