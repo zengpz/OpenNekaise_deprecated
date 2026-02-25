@@ -66,17 +66,29 @@ elif [ -d "$OPENCLAW_HOME/workspace" ] && [ ! -L "$OPENCLAW_HOME/workspace" ]; t
     echo "[opennekaise] Remove it to use the default read-only workspace."
 fi
 
-# ── 4. Patch OpenClaw config to use our workspace ────────────────────────────
-# The configure wizard sets its own workspace path. Override it every start
-# so the agent always loads the OpenNekaise agent pack.
+# ── 4. Patch OpenClaw config with OpenNekaise defaults ───────────────────────
+# The configure wizard sets its own workspace path and channel defaults.
+# Override selected keys every start so runtime behavior stays consistent.
 OC_CONFIG="$OPENCLAW_HOME/.openclaw/openclaw.json"
 NEKAISE_WORKSPACE="$OPENCLAW_HOME/workspace"
 if [ -f "$OC_CONFIG" ] && command -v jq >/dev/null 2>&1; then
-    CURRENT_WS="$(jq -r '.agents.defaults.workspace // empty' "$OC_CONFIG")"
-    if [ -n "$CURRENT_WS" ] && [ "$CURRENT_WS" != "$NEKAISE_WORKSPACE" ]; then
-        jq --arg ws "$NEKAISE_WORKSPACE" '.agents.defaults.workspace = $ws' "$OC_CONFIG" > /tmp/oc-patch.json \
-            && mv /tmp/oc-patch.json "$OC_CONFIG"
-        echo "[opennekaise] Patched workspace path: $CURRENT_WS -> $NEKAISE_WORKSPACE"
+    OC_PATCH="$(mktemp)"
+    if jq --arg ws "$NEKAISE_WORKSPACE" '
+        .agents.defaults.workspace = $ws
+        | (.channels //= {})
+        | (.channels.slack //= {})
+        | .channels.slack.replyToMode = "all"
+        | (.channels.slack.replyToModeByChatType //= {})
+        | .channels.slack.replyToModeByChatType.channel = "all"
+    ' "$OC_CONFIG" > "$OC_PATCH"; then
+        if ! cmp -s "$OC_PATCH" "$OC_CONFIG"; then
+            mv "$OC_PATCH" "$OC_CONFIG"
+            echo "[opennekaise] Patched config defaults: workspace + Slack channel thread replies"
+        else
+            rm -f "$OC_PATCH"
+        fi
+    else
+        rm -f "$OC_PATCH"
     fi
 fi
 

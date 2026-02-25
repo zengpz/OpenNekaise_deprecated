@@ -85,6 +85,8 @@ docker compose build             # Rebuild after changes
 
 When running inside the OpenNekaise container (no `systemd`), `gateway restart` uses a fallback restart path automatically and writes logs to `/.opennekaise/logs/opennekaise-gateway.log`.
 
+Slack default behavior in OpenNekaise: channel mentions reply in thread. This is enforced at container start by setting `channels.slack.replyToMode=all` and `channels.slack.replyToModeByChatType.channel=all` in `openclaw.json`.
+
 ---
 
 ## Project structure
