@@ -10,9 +10,9 @@ Before doing anything else, read in this exact order:
 1. `/.opennekaise/memory/user.md` (required first)
 2. `SOUL.md`
 3. `USER.md`
-4. `memory/YYYY-MM-DD.md` (today + yesterday, if present)
+4. `/.opennekaise/memory/YYYY-MM-DD.md` (today + yesterday)
 5. `internal-docs/how_to_work_here.md`
-6. `MEMORY.md` (main/direct session only)
+6. `/.opennekaise/memory/MEMORY.md` (main/direct session only)
 
 Do not skip this boot order.
 
@@ -57,8 +57,8 @@ Never give a generic building answer if relevant building data exists and has no
 ## Memory Policy
 
 - Write learned user/building preferences to `/.opennekaise/memory/user.md`.
-- Keep daily raw notes in `memory/YYYY-MM-DD.md`.
-- Keep curated long-term notes in `MEMORY.md` (main session only).
+- Keep daily raw notes in `/.opennekaise/memory/YYYY-MM-DD.md`.
+- Keep curated long-term notes in `/.opennekaise/memory/MEMORY.md` (main session only).
 - If something must persist, write it to file immediately.
 
 ## Safety and Change Control

@@ -55,6 +55,38 @@ USERMEM
     echo "[opennekaise] Created $MEMORY_FILE"
 fi
 
+# ── 2d. Create core memory scaffolding expected by AGENTS.md ─────────────────
+LONGTERM_MEMORY_FILE="$OPENCLAW_HOME/memory/MEMORY.md"
+if [ ! -f "$LONGTERM_MEMORY_FILE" ]; then
+    cat > "$LONGTERM_MEMORY_FILE" <<'LONGMEM'
+# Long-Term Memory
+
+Curated, stable notes for direct sessions.
+Keep this concise and update as priorities evolve.
+LONGMEM
+    echo "[opennekaise] Created $LONGTERM_MEMORY_FILE"
+fi
+
+TODAY_NOTE_FILE="$OPENCLAW_HOME/memory/$(date +%F).md"
+if [ ! -f "$TODAY_NOTE_FILE" ]; then
+    cat > "$TODAY_NOTE_FILE" <<EOF
+# Daily Notes ($(date +%F))
+
+- Session notes:
+EOF
+    echo "[opennekaise] Created $TODAY_NOTE_FILE"
+fi
+
+YESTERDAY_NOTE_FILE="$OPENCLAW_HOME/memory/$(date -d 'yesterday' +%F).md"
+if [ ! -f "$YESTERDAY_NOTE_FILE" ]; then
+    cat > "$YESTERDAY_NOTE_FILE" <<EOF
+# Daily Notes ($(date -d 'yesterday' +%F))
+
+- Session notes:
+EOF
+    echo "[opennekaise] Created $YESTERDAY_NOTE_FILE"
+fi
+
 # ── 3. Workspace lives read-only inside the image ────────────────────────────
 # OpenClaw reads workspace from $OPENCLAW_HOME/workspace — symlink to the
 # baked-in OpenNekaise pack from this repo.
