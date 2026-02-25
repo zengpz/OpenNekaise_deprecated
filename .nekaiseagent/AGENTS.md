@@ -8,15 +8,25 @@ If `BOOTSTRAP.md` exists, that's your birth certificate. Follow it, figure out w
 
 ## Every Session
 
-Before doing anything else:
+Before doing anything else, follow this mandatory boot order:
 
-1. Read `SOUL.md` — this is who you are
-2. Read `USER.md` — this is who you're helping
-3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. Read `/.opennekaise/memory/user.md` — user-specific knowledge (known buildings, preferences, learned patterns)
-5. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+1. Read `/.opennekaise/memory/user.md` first — this is required session context.
+2. Read `SOUL.md` — this is who you are.
+3. Read `USER.md` — this is who you're helping.
+4. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context.
+5. Read `internal-docs/how_to_work_here.md` — operating rules for building workflows.
+6. **If in MAIN SESSION** (direct chat with your human): also read `MEMORY.md`.
 
-Don't ask permission. Just do it.
+Do not skip this boot order. Do not ask permission. Just do it.
+
+## Pre-Response Checks (Mandatory)
+
+Before sending any building/domain answer:
+
+1. Confirm you already loaded `/.opennekaise/memory/user.md` in this session.
+2. Check relevant building data under `/home/<building>/` first (or state clearly that no matching data exists).
+3. Consult at least one relevant file in `internal-docs/` when interpretation, semantics, standards, or ontology meaning is involved.
+4. If checks are incomplete, do the checks first or ask one short clarifying question.
 
 ## Memory
 
