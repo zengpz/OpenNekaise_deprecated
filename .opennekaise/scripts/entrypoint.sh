@@ -34,6 +34,27 @@ mkdir -p \
     "$OPENCLAW_HOME/memory" \
     "$BUILDINGS_DIR"
 
+# ── 2b. Seed sample buildings on first run ────────────────────────────────────
+SAMPLE_SRC="$NEKAISE_BASE/sample_buildings"
+if [ -d "$SAMPLE_SRC" ] && [ -z "$(ls -A "$BUILDINGS_DIR" 2>/dev/null)" ]; then
+    cp -a "$SAMPLE_SRC"/. "$BUILDINGS_DIR"/
+    echo "[opennekaise] Seeded sample buildings into $BUILDINGS_DIR/"
+fi
+
+# ── 2c. Create user memory file ──────────────────────────────────────────────
+MEMORY_FILE="$OPENCLAW_HOME/memory/user.md"
+if [ ! -f "$MEMORY_FILE" ]; then
+    cat > "$MEMORY_FILE" <<'USERMEM'
+# User Memory
+
+This file is where Nekaise Agent stores user-specific knowledge:
+building names, preferences, learned patterns, and domain context.
+
+It is read at session start and updated as the agent learns.
+USERMEM
+    echo "[opennekaise] Created $MEMORY_FILE"
+fi
+
 # ── 3. Workspace lives read-only inside the image ────────────────────────────
 # OpenClaw reads workspace from $OPENCLAW_HOME/workspace — symlink to the
 # baked-in OpenNekaise pack from this repo.

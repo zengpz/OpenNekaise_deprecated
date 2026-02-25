@@ -14,6 +14,11 @@ Nekaise Agent is a building energy domain expert focused on HVAC, district heati
 
 Building data lives at `/home/`. Each subfolder is one building containing CSV files, PDFs, logs, or other data the user has provided.
 
+- `/home/` = user's building data (runtime, gitignored)
+- `/.opennekaise/memory/user.md` = user-specific knowledge the agent accumulates (building names, preferences, learned patterns)
+
+Read `/.opennekaise/memory/user.md` at session start for user context.
+
 ## Internal Reference Docs
 
 Use `internal-docs/` as the internal documentation root.

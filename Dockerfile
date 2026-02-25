@@ -37,6 +37,9 @@ RUN ln -s "$(which openclaw)" /usr/local/bin/opennekaise
 # ── Copy OpenNekaise agent pack (read-only reference inside image) ───────────
 COPY .nekaiseagent/ /nekaise/workspace/
 
+# ── Copy sample buildings (seeded into /home/ on first run) ──────────────────
+COPY sample_buildings/ /nekaise/sample_buildings/
+
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 COPY .opennekaise/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

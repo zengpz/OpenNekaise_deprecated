@@ -7,20 +7,20 @@
 
 ## Building data root
 - Default work root: `/home/`
-- Each building has its own folder under this root (for example `virkesvägen17c`, `rio10`).
+- Each building has its own folder under this root (e.g., `<building-slug>`).
+- User-specific building context (known buildings, preferences) lives in `/.opennekaise/memory/user.md`.
 
 ## Scope boundary per conversation
 - When the assistant is working in a specific building channel, it should use only that building's folder as the primary source.
 - Do not mix files from other buildings unless explicitly asked.
 
-## Current known preference from operator
-- `virkesvägen17c` and `rio10` are both active building folders.
-- `virkesvägen17c` is not a global default for every conversation.
+## Building resolution
 - Always infer building from current Slack channel name, then use that matching folder.
 - For example:
-  - channel `virkesvägen17c` -> `/home/virkesvägen17c`
-  - channel `rio10` -> `/home/rio10`
+  - channel `building-a` -> `/home/building-a`
+  - channel `building-b` -> `/home/building-b`
 - Use available documents in the selected folder first (PDF, TTL, and other docs).
+- Check `/.opennekaise/memory/user.md` for previously learned building context.
 
 ## Generated outputs and file hygiene
 - Do not leave generated files in `/.opennekaise/workspace/` for building tasks.

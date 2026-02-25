@@ -44,31 +44,29 @@ opennekaise gateway --bind lan
 
 ## Building data
 
-Building data lives in `home/`. Each subfolder is one building. The directory is mounted into the container at `/home/`, where the agent looks for building data by default.
+Building data is split into **templates** (tracked) and **runtime** (gitignored):
 
-### Sample buildings (included)
+| Directory | Tracked? | Purpose |
+|---|---|---|
+| `sample_buildings/` | Yes | Sample buildings shipped with the repo |
+| `home/` | No (gitignored) | Your actual building data — the agent works here |
 
-The repo ships with sample buildings so you can explore right away:
+On first container start, the sample buildings are automatically copied into `home/` so you have something to explore right away. After that, `home/` is yours — add, remove, or modify buildings freely. Nothing in `home/` ever touches git.
 
 ```
-home/
+sample_buildings/              ← in the repo (read-only templates)
 ├── axelsdgården-32/
 ├── centraltorp-42/
 ├── duvbacken-2/
-├── weather-station/
+└── weather-station/
+
+home/                          ← on your machine only (gitignored)
+├── axelsdgården-32/           ← auto-seeded on first run
+├── my-real-building/          ← your own data
 └── ...
 ```
 
-### Adding your own buildings
-
-Drop your building data folders into `home/` — CSV files, PDFs, logs, TTL models, anything the agent should have access to:
-
-```
-home/
-├── axelsdgården-32/           ← sample (tracked in git)
-├── my-building/               ← your data (add to .gitignore if private)
-└── ...
-```
+To add a building, just drop a folder into `home/` with your CSV files, PDFs, logs, TTL models, or anything else the agent should have access to.
 
 ---
 
@@ -104,7 +102,8 @@ OpenNekaise/
 │   ├── patches/               ← Branding patches
 │   ├── scripts/               ← Entrypoint and helpers
 │   └── runtime/               ← Runtime state (gitignored, volume-mounted)
-├── home/                      ← Building data (volume-mounted into container)
+├── sample_buildings/           ← Sample building data (tracked, seeded into home/)
+├── home/                      ← Runtime building data (gitignored, volume-mounted)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env / .env.example
@@ -117,8 +116,9 @@ OpenNekaise/
 |---|---|---|---|
 | `.nekaiseagent/` | Agent brain — persona, rules, domain knowledge | Baked in read-only | N/A (source in repo) |
 | `.opennekaise/patches/`, `scripts/` | Build-time infra — branding, entrypoint | Used during build | N/A (source in repo) |
-| `.opennekaise/runtime/` | Runtime state — config, memory, logs | Volume-mounted | Yes (survives rebuilds) |
-| `home/` | User building data | Volume-mounted at `/home/` | Yes (on host) |
+| `.opennekaise/runtime/` | Runtime state — config, agent memory, logs | Volume-mounted | Yes (survives rebuilds) |
+| `sample_buildings/` | Sample building data (seeded into `home/` on first run) | Baked in read-only | N/A (source in repo) |
+| `home/` | Your building data (the agent works here) | Volume-mounted at `/home/` | Yes (on host) |
 
 ---
 
@@ -142,15 +142,16 @@ OPENCLAW_VERSION=2026.2.21-2
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  User data (volumes, persisted on host)                     │
+│  Your data (volumes, persisted on host)                     │
 │                                                             │
 │   ./home/                    building data (CSV, PDF, …)    │
-│   ./.opennekaise/runtime/    config, memory, logs           │
+│   ./.opennekaise/runtime/    agent memory, config, logs     │
 ├─────────────────────────────────────────────────────────────┤
-│  OpenNekaise layer (this repo)                              │
+│  OpenNekaise (this repo, read-only in image)                │
 │                                                             │
-│   .nekaiseagent/   agent pack — baked read-only into image  │
-│   .opennekaise/    project infra — patches, entrypoint      │
+│   .nekaiseagent/             agent brain (persona, skills)  │
+│   .opennekaise/              infra (patches, entrypoint)    │
+│   sample_buildings/          templates seeded into home/    │
 ├─────────────────────────────────────────────────────────────┤
 │  OpenClaw (npm package, latest by default)                  │
 │                                                             │
