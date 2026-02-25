@@ -31,8 +31,11 @@ RUN npm install -g openclaw@${OPENCLAW_VERSION}
 COPY .opennekaise/patches/apply-branding.sh /tmp/apply-branding.sh
 RUN bash /tmp/apply-branding.sh && rm /tmp/apply-branding.sh
 
-# ── Create `opennekaise` CLI alias ──────────────────────────────────────────
-RUN ln -s "$(which openclaw)" /usr/local/bin/opennekaise
+# ── Install CLI wrapper (container-safe gateway restart) ────────────────────
+RUN mv "$(which openclaw)" /usr/local/bin/openclaw-bin
+COPY .opennekaise/scripts/openclaw-wrapper.sh /usr/local/bin/openclaw
+RUN chmod +x /usr/local/bin/openclaw \
+    && ln -sf /usr/local/bin/openclaw /usr/local/bin/opennekaise
 
 # ── Copy OpenNekaise agent pack (read-only reference inside image) ───────────
 COPY .nekaiseagent/ /nekaise/workspace/

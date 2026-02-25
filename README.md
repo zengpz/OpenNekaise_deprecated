@@ -75,12 +75,15 @@ To add a building, just drop a folder into `home/` with your CSV files, PDFs, lo
 # Inside the container:
 opennekaise configure            # Re-run the configuration wizard
 opennekaise gateway   # Start the gateway
+opennekaise gateway restart      # Restart gateway (container-safe fallback)
 
 # On the host:
 docker compose logs -f           # Follow logs
 docker compose down              # Stop
 docker compose build             # Rebuild after changes
 ```
+
+When running inside the OpenNekaise container (no `systemd`), `gateway restart` uses a fallback restart path automatically and writes logs to `/tmp/opennekaise-gateway.log`.
 
 ---
 
