@@ -83,7 +83,7 @@ docker compose down              # Stop
 docker compose build             # Rebuild after changes
 ```
 
-When running inside the OpenNekaise container (no `systemd`), `gateway restart` uses a fallback restart path automatically and writes logs to `/tmp/opennekaise-gateway.log`.
+When running inside the OpenNekaise container (no `systemd`), `gateway restart` uses a fallback restart path automatically and writes logs to `/.opennekaise/logs/opennekaise-gateway.log`.
 
 ---
 
