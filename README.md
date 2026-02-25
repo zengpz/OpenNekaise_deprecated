@@ -106,7 +106,6 @@ OpenNekaise/
 ├── home/                      ← Runtime building data (gitignored, volume-mounted)
 ├── Dockerfile
 ├── docker-compose.yml
-├── .env / .env.example
 └── README.md
 ```
 

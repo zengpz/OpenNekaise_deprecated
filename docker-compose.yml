@@ -14,6 +14,5 @@ services:
     volumes:
       - ./.opennekaise/runtime:/.opennekaise
       - ./home:/home
-      - ./sample_buildings:/nekaise/sample_buildings:ro
     ports:
       - "${GATEWAY_PORT:-20629}:18789"
