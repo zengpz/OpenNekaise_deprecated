@@ -3,8 +3,9 @@
 #
 # Responsibilities:
 #   1. Create user-writable directory structure
-#   2. Point openclaw workspace to the read-only OpenNekaise pack
-#   3. Run whatever the user passes (default: bash for interactive use)
+#   2. Bridge workspace memory paths to durable runtime memory
+#   3. Emit explicit BOOT_* startup status diagnostics
+#   4. Run whatever the user passes (default: bash for interactive use)
 set -euo pipefail
 
 OPENCLAW_HOME_DEFAULT="/.opennekaise"
@@ -12,6 +13,8 @@ OPENCLAW_HOME_LEGACY="/.openclaw"
 OPENCLAW_HOME="${OPENCLAW_HOME:-$OPENCLAW_HOME_DEFAULT}"
 BUILDINGS_DIR="${NEKAISE_BUILDINGS_DIR:-/home}"
 NEKAISE_BASE="/nekaise"
+TODAY="$(date +%F)"
+YESTERDAY="$(date -d 'yesterday' +%F)"
 
 # ── 1. Runtime home migration/compatibility ───────────────────────────────────
 # New default: /.opennekaise
@@ -32,6 +35,7 @@ fi
 mkdir -p \
     "$OPENCLAW_HOME/logs" \
     "$OPENCLAW_HOME/memory" \
+    "$OPENCLAW_HOME/outbox" \
     "$BUILDINGS_DIR"
 
 # ── 2b. Seed sample buildings on first run ────────────────────────────────────
@@ -51,8 +55,15 @@ This file is where Nekaise Agent stores user-specific knowledge:
 building names, preferences, learned patterns, and domain context.
 
 It is read at session start and updated as the agent learns.
+
+healthcheck_keyword: nekaise-memory-sentinel
 USERMEM
     echo "[opennekaise] Created $MEMORY_FILE"
+fi
+
+if ! grep -q "nekaise-memory-sentinel" "$MEMORY_FILE"; then
+    printf '\nhealthcheck_keyword: nekaise-memory-sentinel\n' >> "$MEMORY_FILE"
+    echo "[opennekaise] Added memory health-check sentinel to $MEMORY_FILE"
 fi
 
 # ── 2d. Create core memory scaffolding expected by AGENTS.md ─────────────────
@@ -67,35 +78,58 @@ LONGMEM
     echo "[opennekaise] Created $LONGTERM_MEMORY_FILE"
 fi
 
-TODAY_NOTE_FILE="$OPENCLAW_HOME/memory/$(date +%F).md"
+TODAY_NOTE_FILE="$OPENCLAW_HOME/memory/$TODAY.md"
 if [ ! -f "$TODAY_NOTE_FILE" ]; then
     cat > "$TODAY_NOTE_FILE" <<EOF
-# Daily Notes ($(date +%F))
+# Daily Notes ($TODAY)
 
 - Session notes:
 EOF
     echo "[opennekaise] Created $TODAY_NOTE_FILE"
 fi
 
-YESTERDAY_NOTE_FILE="$OPENCLAW_HOME/memory/$(date -d 'yesterday' +%F).md"
+YESTERDAY_NOTE_FILE="$OPENCLAW_HOME/memory/$YESTERDAY.md"
 if [ ! -f "$YESTERDAY_NOTE_FILE" ]; then
     cat > "$YESTERDAY_NOTE_FILE" <<EOF
-# Daily Notes ($(date -d 'yesterday' +%F))
+# Daily Notes ($YESTERDAY)
 
 - Session notes:
 EOF
     echo "[opennekaise] Created $YESTERDAY_NOTE_FILE"
 fi
 
-# ── 3. Workspace lives read-only inside the image ────────────────────────────
-# OpenClaw reads workspace from $OPENCLAW_HOME/workspace — symlink to the
-# baked-in OpenNekaise pack from this repo.
+# ── 3. Workspace setup and memory path bridging ───────────────────────────────
+# OpenClaw reads workspace from $OPENCLAW_HOME/workspace.
+# By default this points to the baked OpenNekaise pack from this repo.
 if [ ! -L "$OPENCLAW_HOME/workspace" ] && [ ! -d "$OPENCLAW_HOME/workspace" ]; then
     ln -s "$NEKAISE_BASE/workspace" "$OPENCLAW_HOME/workspace"
-    echo "[opennekaise] Workspace linked to $NEKAISE_BASE/workspace (read-only)"
+    echo "[opennekaise] Workspace linked to $NEKAISE_BASE/workspace"
 elif [ -d "$OPENCLAW_HOME/workspace" ] && [ ! -L "$OPENCLAW_HOME/workspace" ]; then
     echo "[opennekaise] Note: user workspace directory exists at $OPENCLAW_HOME/workspace"
-    echo "[opennekaise] Remove it to use the default read-only workspace."
+    echo "[opennekaise] Keeping user workspace directory."
+fi
+
+WORKSPACE_DIR="$OPENCLAW_HOME/workspace"
+WORKSPACE_MEMORY_PATH="$WORKSPACE_DIR/memory"
+WORKSPACE_MEMORY_FILE="$WORKSPACE_DIR/MEMORY.md"
+WORKSPACE_OUTBOX_PATH="$WORKSPACE_DIR/outbox"
+
+if [ ! -e "$WORKSPACE_MEMORY_PATH" ]; then
+    if ln -s "$OPENCLAW_HOME/memory" "$WORKSPACE_MEMORY_PATH"; then
+        echo "[opennekaise] Linked workspace memory -> $OPENCLAW_HOME/memory"
+    fi
+fi
+
+if [ ! -e "$WORKSPACE_MEMORY_FILE" ]; then
+    if ln -s "$OPENCLAW_HOME/memory/MEMORY.md" "$WORKSPACE_MEMORY_FILE"; then
+        echo "[opennekaise] Linked workspace MEMORY.md -> $OPENCLAW_HOME/memory/MEMORY.md"
+    fi
+fi
+
+if [ ! -e "$WORKSPACE_OUTBOX_PATH" ]; then
+    if ln -s "$OPENCLAW_HOME/outbox" "$WORKSPACE_OUTBOX_PATH"; then
+        echo "[opennekaise] Linked workspace outbox -> $OPENCLAW_HOME/outbox"
+    fi
 fi
 
 # ── 4. Patch OpenClaw config with OpenNekaise defaults ───────────────────────
@@ -124,7 +158,43 @@ if [ -f "$OC_CONFIG" ] && command -v jq >/dev/null 2>&1; then
     fi
 fi
 
-# ── 5. Run user command ──────────────────────────────────────────────────────
+# ── 5. Boot file diagnostics (BOOT_OK / BOOT_WARN / BOOT_FAIL) ──────────────
+BOOT_FAILED=0
+REQUIRED_BOOT_FILES=(
+    "$OPENCLAW_HOME/memory/user.md"
+    "$OPENCLAW_HOME/workspace/AGENTS.md"
+    "$OPENCLAW_HOME/workspace/internal-docs/how_to_work_here.md"
+)
+
+OPTIONAL_BOOT_FILES=(
+    "$OPENCLAW_HOME/workspace/SOUL.md"
+    "$OPENCLAW_HOME/workspace/USER.md"
+    "$OPENCLAW_HOME/workspace/IDENTITY.md"
+    "$OPENCLAW_HOME/workspace/MEMORY.md"
+    "$OPENCLAW_HOME/workspace/memory/$TODAY.md"
+    "$OPENCLAW_HOME/workspace/memory/$YESTERDAY.md"
+)
+
+for path in "${REQUIRED_BOOT_FILES[@]}"; do
+    if [ ! -e "$path" ]; then
+        echo "BOOT_FAIL_MISSING_REQUIRED:$path"
+        BOOT_FAILED=1
+    fi
+done
+
+for path in "${OPTIONAL_BOOT_FILES[@]}"; do
+    if [ ! -e "$path" ]; then
+        echo "BOOT_WARN_MISSING_OPTIONAL:$path"
+    fi
+done
+
+if [ "$BOOT_FAILED" -ne 0 ]; then
+    exit 1
+fi
+
+echo "BOOT_OK"
+
+# ── 6. Run user command ──────────────────────────────────────────────────────
 # If no args or just "bash", drop into interactive shell
 # If args like "gateway --bind lan", pass through to openclaw
 export OPENCLAW_HOME
