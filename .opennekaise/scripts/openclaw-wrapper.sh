@@ -24,8 +24,34 @@ LOG_FILE="$LOG_DIR/opennekaise-gateway.log"
 PID_FILE="$OPENCLAW_HOME_DIR/gateway.pid"
 mkdir -p "$LOG_DIR"
 
+gateway_listener_pids() {
+    if command -v lsof >/dev/null 2>&1; then
+        lsof -tiTCP:18789 -sTCP:LISTEN 2>/dev/null || true
+    fi
+}
+
+gateway_is_running() {
+    local pid
+    if [[ -f "$PID_FILE" ]]; then
+        pid="$(cat "$PID_FILE" 2>/dev/null || true)"
+        if [[ "$pid" =~ ^[0-9]+$ ]] && kill -0 "$pid" >/dev/null 2>&1; then
+            return 0
+        fi
+    fi
+
+    if command -v pgrep >/dev/null 2>&1 && pgrep -f "$GATEWAY_PATTERN" >/dev/null 2>&1; then
+        return 0
+    fi
+
+    if [[ -n "$(gateway_listener_pids)" ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
 stop_gateway_processes() {
-    local stopped=0
+    local did_stop=1
 
     if [[ -f "$PID_FILE" ]]; then
         local pid
@@ -36,18 +62,30 @@ stop_gateway_processes() {
             if kill -0 "$pid" >/dev/null 2>&1; then
                 kill -9 "$pid" >/dev/null 2>&1 || true
             fi
-            stopped=1
+            did_stop=0
         fi
         rm -f "$PID_FILE"
     fi
 
     if command -v pkill >/dev/null 2>&1; then
         if pkill -f "$GATEWAY_PATTERN" >/dev/null 2>&1; then
-            stopped=1
+            did_stop=0
         fi
     fi
 
-    return "$stopped"
+    local listener_pids
+    listener_pids="$(gateway_listener_pids)"
+    if [[ -n "$listener_pids" ]]; then
+        echo "$listener_pids" | xargs -r kill >/dev/null 2>&1 || true
+        sleep 1
+        listener_pids="$(gateway_listener_pids)"
+        if [[ -n "$listener_pids" ]]; then
+            echo "$listener_pids" | xargs -r kill -9 >/dev/null 2>&1 || true
+        fi
+        did_stop=0
+    fi
+
+    return "$did_stop"
 }
 
 if [[ "${1:-}" == "gateway" && "${2:-}" == "stop" ]] && [[ "$use_container_restart_fallback" -eq 1 ]]; then
@@ -67,18 +105,13 @@ if [[ "${1:-}" == "gateway" && "${2:-}" == "restart" ]] && [[ "$use_container_re
     stop_gateway_processes >/dev/null 2>&1 || true
 
     # Start detached from exec TTY/session so it survives docker exec exit.
-    if command -v setsid >/dev/null 2>&1; then
-        setsid "$OPENCLAW_BIN" gateway >"$LOG_FILE" 2>&1 < /dev/null &
-    else
-        nohup "$OPENCLAW_BIN" gateway >"$LOG_FILE" 2>&1 < /dev/null &
-    fi
-
+    nohup "$OPENCLAW_BIN" gateway >"$LOG_FILE" 2>&1 < /dev/null &
     GW_PID="$!"
     echo "$GW_PID" >"$PID_FILE"
 
     # Detect immediate startup failures and return actionable output.
-    sleep 2
-    if ! kill -0 "$GW_PID" >/dev/null 2>&1; then
+    sleep 3
+    if ! gateway_is_running; then
         rm -f "$PID_FILE"
         echo "Gateway failed to stay running after restart. Last log lines:"
         tail -n 50 "$LOG_FILE" 2>/dev/null || echo "(no log output)"
