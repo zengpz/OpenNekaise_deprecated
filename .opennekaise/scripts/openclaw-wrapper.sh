@@ -106,7 +106,7 @@ if [[ "${1:-}" == "gateway" && "${2:-}" == "restart" ]] && [[ "$use_container_re
     stop_gateway_processes >/dev/null 2>&1 || true
 
     # Start detached from exec TTY/session so it survives docker exec exit.
-    nohup "$OPENCLAW_BIN" gateway >"$LOG_FILE" 2>&1 < /dev/null &
+    nohup "$OPENCLAW_BIN" gateway start >"$LOG_FILE" 2>&1 < /dev/null &
     GW_PID="$!"
     echo "$GW_PID" >"$PID_FILE"
 
