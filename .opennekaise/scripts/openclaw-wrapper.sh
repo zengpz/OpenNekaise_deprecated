@@ -22,6 +22,7 @@ fi
 LOG_DIR="$OPENCLAW_HOME_DIR/logs"
 LOG_FILE="$LOG_DIR/opennekaise-gateway.log"
 PID_FILE="$OPENCLAW_HOME_DIR/gateway.pid"
+GATEWAY_START_TIMEOUT_SEC="${OPENNEKAISE_GATEWAY_START_TIMEOUT_SEC:-20}"
 mkdir -p "$LOG_DIR"
 
 gateway_listener_pids() {
@@ -109,11 +110,19 @@ if [[ "${1:-}" == "gateway" && "${2:-}" == "restart" ]] && [[ "$use_container_re
     GW_PID="$!"
     echo "$GW_PID" >"$PID_FILE"
 
-    # Detect immediate startup failures and return actionable output.
-    sleep 3
-    if ! gateway_is_running; then
+    # Require a real listener on the gateway port before reporting success.
+    started=1
+    for _ in $(seq 1 "$GATEWAY_START_TIMEOUT_SEC"); do
+        if [[ -n "$(gateway_listener_pids)" ]]; then
+            started=0
+            break
+        fi
+        sleep 1
+    done
+
+    if [[ "$started" -ne 0 ]]; then
         rm -f "$PID_FILE"
-        echo "Gateway failed to stay running after restart. Last log lines:"
+        echo "Gateway failed to become ready on port 18789. Last log lines:"
         tail -n 50 "$LOG_FILE" 2>/dev/null || echo "(no log output)"
         exit 1
     fi
