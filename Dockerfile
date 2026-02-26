@@ -17,6 +17,7 @@ LABEL org.opencontainers.image.based-on="openclaw@${OPENCLAW_VERSION}"
 # ── Runtime dependencies ─────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
     jq git ca-certificates \
+    procps lsof \
     python3 make g++ libopus-dev \
     && rm -rf /var/lib/apt/lists/*
 
