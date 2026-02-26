@@ -1,3 +1,5 @@
+This repo is deprecated.
+
 # 🏔️ OpenNekaise
 
 OpenNekaise is a distribution of [OpenClaw](https://github.com/openclaw/openclaw) that ships **Nekaise Agent** — your virtual building manager.
